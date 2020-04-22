@@ -13,9 +13,9 @@ const pool = new Pool( {
 const pool = new Pool( {
     host: "localhost",
     port: 5433,
-    user: "postgres",
-    database: "justfeastdb",
-    password: "postgres",
+    user: "testUser",
+    database: "testdb",
+    password: "password",
 });
 
 pool.on('connect', () => {
