@@ -3,14 +3,19 @@
 
 // Create Database and use the following credentials:
 const { Pool } = require('pg');
+/*
+const connectionString = "postgres://postgres:postgres@localhost:5432/justfeastdb";
 
+const pool = new Pool( {
+    connectionString: connectionString
+});*/
 
 const pool = new Pool( {
     host: "localhost",
     port: 5433,
-    user: "testUser",
-    database: "testdb",
-    password: "password",
+    user: "postgres",
+    database: "justfeastdb",
+    password: "postgres",
 });
 
 pool.on('connect', () => {

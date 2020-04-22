@@ -23,9 +23,9 @@ const pgPool = new pg.Pool({
     // Insert pool options here
     host: "localhost",
     port: 5433,
-    user: "testUser",
-    database: "testdb",
-    password: "password",
+    user: "postgres",
+    database: "justfeastdb",
+    password: "postgres",
 });
 
 //const pgSession = require('connect-pg-simple')(session);
