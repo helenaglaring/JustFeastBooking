@@ -1,17 +1,11 @@
-//Create DB "justfeast"
 
-
-//DROP DATABASE IF EXISTS justfeastdb;
-// CREATE DATABASE justfeastdb;
-
-//\c justfeastdb;
 
 const pool = require('./server/db/db');
 
 /*
-CREATE DATABASE justfeastdb
+CREATE DATABASE testdb
     WITH
-    OWNER = postgres
+    OWNER = testUser
     ENCODING = 'UTF8'
     LC_COLLATE = 'C'
     LC_CTYPE = 'C'
