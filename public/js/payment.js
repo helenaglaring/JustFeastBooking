@@ -1,17 +1,18 @@
-// payment.js
-console.log("Test");
+
+/*--payment.js--------------------------CLIENT SIDE VALIDATION-----------------------------------------------------*/
+
+console.log("payment.js");
 
 
 // Formålet med at oprette en klasse er at definere hvilke informationer en "betaling" består af
 // Klassen er ud fra en constructor givet 6 parametre der synes relevante for den ønskede funktion i programmet MB
 class Payment {
-    constructor(cardNumber,expiryDateMonth,expiryDateYear,CVC,cardHoldersName,paymentID) {
+    constructor(cardNumber,expiryDateMonth,expiryDateYear,CVC,cardHoldersName) {
         this.cardNumber = cardNumber;
         this.expiryDateMonth = expiryDateMonth;
         this.expiryDateYear = expiryDateYear;
         this.CVC = CVC;
         this.cardHoldersName = cardHoldersName;
-        this.paymentID=paymentID;
     }
 
 // Denne funktion burde nok være en metode i klassen for at fremvise lidt bedre arbejde med klasser
@@ -152,25 +153,23 @@ function acceptPayment() {
     }
 }
 */
-
+// Tilføjer eventlistener til submitknap for at sikre at der valideres fra klient-siden inden formen submittes.
 const form = document.querySelector('form');
+//const paymentForm = document.getElementById('paymentForm');
 const paymentForm = document.querySelector('#paymentForm');
-
-paymentForm.addEventListener('submit', event=> {
+paymentForm.addEventListener('submit', event => {
         event.preventDefault();
         console.log("Eventlistener submit");
 
         if (Payment.validateCreditCard() === false) {
             console.log("fejl");
-        } else {
-            if (confirm("Bekræft din betaling")){
+        } else {/*
+            if (confirm("Bekræft din betaling")){*
                 form.submit()
+
             } else {
                 console.log("Bruger annulerede sin betaling");
-            }
+            }*/
+            form.submit()
         }
 });
-
-
-
-

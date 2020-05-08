@@ -93,20 +93,27 @@ class Address {
     }
 }
 
+// Tilføjer eventlistener til submitknap for at sikre at der valideres fra klient-siden inden formen submittes.
 const form = document.querySelector('form');
 const addressForm = document.querySelector('#delAddressForm');
 
 addressForm.addEventListener('submit', event=> {
+        // Forhindrer 'default' så form ikke submittes når man klikker 'submit'
         event.preventDefault();
         console.log("Eventlistener submit");
 
+        // Bruger if-else statement til at tjekke at de indtastede oplysninger er korrekte
         if (Address.registerAddress() === false) {
             console.log("fejl");
         } else {
+            // Hvis metoden returnerer sand kan den validerede form submittes.
             form.submit()
         }
     }
 );
+
+
+
 
 
 

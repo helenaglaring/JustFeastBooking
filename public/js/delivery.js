@@ -1,9 +1,7 @@
 
 /*--delivery.js--------------------------CLIENT SIDE VALIDATION-----------------------------------------------------*/
 
-
 console.log("hej")
-
 
 class Delivery {
     constructor(delivery, deliveryTime) {
@@ -98,6 +96,31 @@ class Delivery {
         }
     }
 }
+
+// Tilføjer eventlistener til submitknap for at sikre at der valideres fra klient-siden inden formen submittes.
+const form = document.querySelector('form');
+const deliveryForm = document.querySelector('#deliveryForm');
+
+deliveryForm.addEventListener('submit', event=> {
+        event.preventDefault();
+        console.log("Eventlistener submit");
+
+        if (Delivery.registerDelivery() === false) {
+            console.log("fejl");
+
+        } else {
+
+            form.submit()
+        }
+    }
+);
+
+
+
+
+
+
+
 /*
 FETCH
 const formElem = document.getElementById('deliveryForm');
@@ -120,20 +143,3 @@ fetch('http://localhost:3000/order/delivery-method', {
     .then(response => console.log('Success:', JSON.stringify(response)))
 
  */
-
-const form = document.querySelector('form');
-const deliveryForm = document.querySelector('#deliveryForm');
-
-deliveryForm.addEventListener('submit', event=> {
-        event.preventDefault();
-        console.log("Eventlistener submit");
-
-        if (Delivery.registerDelivery() === false) {
-            console.log("fejl");
-
-        } else {
-
-            form.submit()
-        }
-    }
-);
