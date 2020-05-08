@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+</html>
+
+
+<%- include('layouts/header'); -%>
+
+<body class="page">
+
+    <%- include('layouts/navbar'); -%>
+
+
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+            <%- include('layouts/messages'); -%>
+        </div>
+    </div>
+
+
+    <div class="page-header">
+        <h2> Ordre-bekræftelse </h2>
+    </div>
+
+    <% if (order.status === 'order') {%>
+        <div>
+            <h3>Tak for din bestilling <%=order.userFirstName%>!</h3>
+
+            <p>Ordre-ID: <%=order.orderID%></p>
+            <p>E-mail: <%= order.userEmail %></p>
+            <p>Ordre-dato: <%= order.order_date %></p>
+            <p>Samlet pris for ordre: <%= order.amount %></p>
+
+        </div>
+
+    <% } else { %>
+        <p> Ingen ordre </p>
+    <% } %>
+
+    <!-- Scripts -->
+    <%- include('layouts/scripts'); -%>
+
+</body>
+</html>
