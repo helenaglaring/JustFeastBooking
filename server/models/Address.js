@@ -1,17 +1,33 @@
+/*-----------------------------------ADDRESS MODEL---------------------------------------------*/
 
-const pool = require('../db/db');
+module.exports = class Address {
+    constructor(addressID, deliveryID, streetName, streetNumber, zipCode, city) {
+        this.addressID = addressID;
+        this.deliveryID = deliveryID;
+        this.streetName = streetName ;
+        this.streetNumber = streetNumber;
+        this.zipCode = zipCode;
+        this.city = city;
+    }
+};
 
+
+
+/* GAMLE. Samme funktionalitet flyttet til controllers.
 module.exports = {
-    create: function (data, user_id) {
+    // Funktion der indsætter leveringsaddresse i database.
+    // Addresse-objekt og delivery_id som argumenter
+    create: function (data, delivery_id) {
         return new Promise( (resolve, reject)=> {
             pool.query(`
-                INSERT INTO address (user_id, streetname, streetnumber, zipcode, city)
+                INSERT INTO address (delivery_id, streetname, streetnumber, zipcode, city)
                 VALUES ($1, $2, $3, $4, $5)
-                ON CONFLICT (user_id)
+                ON CONFLICT (delivery_id)
                 DO UPDATE SET streetname=$2, streetnumber=$3, zipcode=$4, city=$5
                 RETURNING *`
-            , [user_id, data.streetname, data.streetnumber, data.zipcode, data.city])
+            , [delivery_id, data.streetname, data.streetnumber, data.zipcode, data.city])
             .then(result => {
+                // Returnere den indsatte række med addresse-oplysninger.
                 resolve(result.rows[0]);
             })
             .catch((err) => {
@@ -21,10 +37,30 @@ module.exports = {
         });
     },
 
+
+    */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+    // Funktion til at finde specifik addresse. Tager user-objekt som parameter.
     findOne: function(data) {
         return new Promise((resolve, reject)  =>{
+            //Bruger funktionen 'finOneById', der tager user_id som argument.
             findOneById(data.user_id)
                 .then( (result) => {
+                    // Returnerer række med addresse-oplysninger fra specifik bruger.
                     resolve(result);
                 })
                 .catch( (err) =>  {
@@ -32,10 +68,9 @@ module.exports = {
                 });
         })
     }
-};
-
-
-
+};*/
+/*
+// Hjælpe-funktion der finder en brugers addresse fra user_id.
 function findOneById(id) {
     return new Promise(function(resolve, reject) {
         pool.query('SELECT * FROM address WHERE user_id = $1', [id])
@@ -52,4 +87,4 @@ function findOneById(id) {
                 reject(err);
             });
     });
-}
+}*/
