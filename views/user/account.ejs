@@ -8,6 +8,8 @@
 <body class="page">
 
 <%- include('../layouts/navbar'); -%>
+<button  id="toCart" class="btn btn-sm btn-dark" onclick="toCart()"> TEST </button>
+
 
 <div class="page-header">
     <h2> User Account </h2>
@@ -20,7 +22,7 @@
 </div>
 
 <div class="table-wrapper">
-    <% if (user.user_id!== null) {%>
+    <% if (user.userID!== null) {%>
 
         <table class="table table-hovered">
             <thead class="thead-dark">
@@ -32,16 +34,15 @@
             </thead>
             <tbody>
                 <tr>
-                    <th scope="row"><%=user.first_name%></th>
-                    <td><%=user.last_name%></td>
+                    <th scope="row"><%=user.firstname%></th>
+                    <td><%=user.lastname%></td>
                     <td><%=user.email%></td>
-                    <% if (user.phone !== null) {%>
-                    <td><%=user.phone%></td>
-                    <% } %>
-
                 </tr>
             </tbody>
         </table>
+
+        <button id="<%=user.userID%>" class="btn btn-sm btn-danger deleteUser"> Slet bruger </button>
+
     <% } else { %>
         <p class="text-center"> Ingen bruger logget ind </p>
     <% } %>
@@ -51,5 +52,7 @@
 
 <!-- Scripts -->
 <%- include('../layouts/scripts'); -%>
+<script type="text/javascript" src="/js/deleteUser.js"></script>
+
 </body>
 </html>

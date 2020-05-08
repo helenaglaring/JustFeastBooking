@@ -1,15 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
-<%- include('layouts/header.ejs');-%>
-<body>
-<h1>
-    404
-</h1>
+</html>
 
-<p>
-    Something went terribly wrong...
-</p>
 
+<%- include('layouts/header'); -%>
+
+<body class="page">
+
+    <%- include('layouts/navbar'); -%>
+
+
+    <% if(title) { %>
+        <h1>
+            <%= title %>
+        </h1>
+    <%} %>
+
+
+    <!-- Scripts -->
+    <%- include('layouts/scripts'); -%>
 
 </body>
 </html>

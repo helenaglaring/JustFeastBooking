@@ -14,6 +14,7 @@
                 <th scope="col">Pris </th>
                 <th scope="col"> Tilføj </th>
                 <th scope="col"> Fjern </th>
+                <th scope="col"> Fjern alle </th>
             </tr>
             </thead>
 
@@ -21,14 +22,20 @@
             <% lineitems.forEach((lineitem, index) => { %>
                 <% if (lineitem.qty > 0) {%>
                 <tr>
-                    <th scope="row"><%= lineitem.product.product_name %></th>
+                    <th scope="row"><%= lineitem.product.productName %></th>
                     <td> <%= lineitem.qty %> X</td>
                     <td><%= lineitem.price %>  </td>
                     <td>
-                        <a href="/lineItem/<%= lineitem.product.product_id %>" class="btn btn-sm btn-success" role="button">+</a>
+                        <!--<a href="/lineitems/add/<%#= lineitem.product.product_id %>" class="btn btn-sm btn-success" role="button">+</a>-->
+                        <button id="<%= lineitem.product.productID%>" class="btn btn-sm btn-success addLineItem">+</button>
                     </td>
                     <td>
-                        <a href="/remove-lineItem/<%= lineitem.product.product_id%>" class="btn btn-sm btn-danger" role="button">-</a>
+                        <button id="<%= lineitem.product.productID%>" class="btn btn-sm btn-danger removeLineItem">-</button>
+                        <!--<a href="/lineitems/delete-one/<%#= lineitem.product.product_id%>" class="btn btn-sm btn-danger" role="button">-</a>-->
+                    </td>
+
+                    <td>
+                        <button id="<%= lineitem.product.productID%>" class="btn btn-sm btn-danger deleteLineItems">X</button>
                     </td>
                 </tr>
                 <% } %>
@@ -50,10 +57,15 @@
     </div>
 
     <div id="order_button_div">
-        <a href="/delivery-method"> <button class="btn btn-success" id="order_button"> Bestil </button></a>
+        <a href="/checkout/delivery-method"> <button class="btn btn-success" id="order_button"> Bestil </button></a>
     </div>
 
+
 </section>
+
+
+
+
 
 
 

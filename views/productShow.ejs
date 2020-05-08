@@ -8,6 +8,10 @@
 
 <%- include('layouts/navbar'); -%>
 
+<!-------- TEST -------->
+<button  id="testCart" class="btn btn-sm btn-dark" onclick="addItemsToCart()"> TEST </button>
+
+
 <div class="page-header">
     <h2> Menu </h2>
 </div>
@@ -32,23 +36,17 @@
                 <th scope="col">Produkt</th>
                 <th scope="col">Pris</th>
                 <th scope="col">Tilføj</th>
-                <th scope="col">Fjern</th>
             </tr>
             </thead>
             <tbody>
             <% products.forEach((product) => { %>
                     <tr>
-                        <th scope="row"><%= product.product_id %></th>
-                        <td> <%= product.product_name %></td>
-                        <td><%= product.product_price%> Kr.</td>
+                        <th scope="row"><%= product.productID %></th>
+                        <td> <%= product.productName %></td>
+                        <td><%= product.productPrice%> Kr.</td>
                         <td>
-                            <a href="/lineItem/<%= product.product_id%>" class="btn btn-primary" role="button">Tilføj til kurv</a>
+                            <button id="<%= product.productID%>" class="btn btn-sm btn-primary addLineItem">Tilføj til kurv</button>
                         </td>
-                        <td>
-
-                            <a href="/remove-lineItem/<%= product.product_id%>" class="btn btn-danger" role="button">Fjern</a>
-                        </td>
-
                 </tr>
 
             <% }) %>
@@ -69,6 +67,7 @@
 <!-------------------- Scripts ------------------------------->
 <%- include('layouts/scripts'); -%>
 <!---->
+<script type="text/javascript" src="/js/lineItem.js"></script>
 
 </body>
 </html>
