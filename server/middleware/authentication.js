@@ -81,9 +81,14 @@ exports.createCart = function(req, res, next) {
         .then(result => {
             // Ordre er allerede oprettet som 'cart'.
             if (result.rows[0]) {
-                // Returnerer record fra 'order'-tabel som har det specifikke user_id.
-                console.log("Cart er allerede oprettet med ordre-ID: " + req.session.order.orderID);
+                // Returnerer record fra 'order'-tabel som har det specifikke user_id og status 'cart'
+                let {order_id, user_id, order_date, status} = result.rows[0];
+                // Instantierer nyt Order objekt
+                let oldOrderCart = new Order(order_id, user_id, order_date, status);
+
+                console.log("Cart er allerede oprettet med ordre-ID: " + oldOrderCart.orderID);
                 console.log("Nuværende ordre: ");
+                req.session.order = oldOrderCart;
                 console.log(req.session.order);
                 next();
             } else {
