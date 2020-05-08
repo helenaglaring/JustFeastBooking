@@ -1,180 +1,144 @@
-
+// Definerer router-objekt, som er en isoleret instans af middleware og routes.
 const express = require('express');
 const router = express.Router();
 
 
-/*-----------------------------------Import Middleware ------------------------------------------------*/
+/*-----------------------------------Middleware----------------------------------------------*/
+// Importerer middleware
 const auth = require('../middleware/authentication');
-const { signupValidationRules, signupValidate } = require('../middleware/signupValidator.js');
-const { loginValidationRules, loginValidate } = require('../middleware/loginValidator.js');
-const cartMiddle = require('../middleware/cartMiddleware');
-const orderMiddle = require('../middleware/orderMiddleware');
-const orderDetailsMiddle = require('../middleware/orderDetailsMiddleware');
+const {
+    signupValidationRules,
+    signupValidate,
+    loginValidationRules,
+    loginValidate} = require('../middleware/user-validation.js');
 
-/*-------------------------------------------------------------------------------*/
+/*-----------------------------------Controllers ---------------------------------------------*/
+// Importerer alle controllers
 
-// INDEX-PAGE
 const homeController = require('../controllers/homeController');
 
-
-// SIGNUP
-const signupGET = require('../controllers/signupGET');
-const signupController = require('../controllers/signupController');
-
-// LOGIN
-const loginController = require('../controllers/loginController');
-const loginUserController = require('../controllers/loginUserController');
-
-// LOGOUT
-const logoutController = require('../controllers/logoutController');
-
-// USER ACCOUNT
-const userAccountController = require('../controllers/userAccountController');
-
+// USER
+const userControllers = require('../controllers/userControllers');
 
 // PRODUCTS
-const productGET = require('../controllers/productGET');
+const productControllers = require('../controllers/productControllers');
 
 // LINEITEM
-const lineItemGET = require('../controllers/lineItemGET');
-const lineItemSTORE = require('../controllers/lineItemSTORE');
-const lineItemREMOVE = require('../controllers/lineItemREMOVE');
-
-
-// ORDER
-const checkoutController = require('../controllers/checkoutController');
+const lineItemControllers = require('../controllers/lineItemControllers');
 
 // DELIVERY-METHOD
-const deliveryMethodGET = require('../controllers/deliveryMethodGET');
-const deliveryMethodController = require('../controllers/deliveryMethodController');
+const deliveryMethodControllers = require('../controllers/deliveryMethodControllers');
 
 // DELIVERY-ADDRESS
-const deliveryAddressGET = require('../controllers/deliveryAddressGET');
-const deliveryAddressController = require('../controllers/deliveryAddressController');
+const addressControllers = require('../controllers/addressControllers');
 
 // PAYMENT
-const paymentGET = require('../controllers/paymentGET');
-const paymentController = require('../controllers/paymentController');
+const paymentControllers = require('../controllers/paymentControllers');
 
 // ORDER
-const orderController = require('../controllers/orderGET');
+const orderControllers = require('../controllers/orderControllers');
 
 
+/*-------------------------Endpoints og route-handlers---------------------------------------*/
 
 
-/*----------------------------------- INDEX-PAGE ------------------------------------------------------*/
+/*------------ INDEX-PAGE ---------------*/
 // GET home page
 router.get('/', homeController);
 
 
+/*------------- SIGNUP ------------------*/
+// GET route for signup page
+router.get('/signup', auth.isNotLoggedIn, userControllers.signupPage);
 
-/*----------------------------------- SIGNUP ------------------------------------------------------*/
-//Router to Register page
-router.get('/signup', auth.isNotLoggedIn, signupGET);
 
-//Router to Register page
-router.post('/signup',signupValidationRules(), signupValidate, signupController);
+// POST route for user signup
+router.post('/signup',signupValidationRules(), signupValidate, userControllers.signup);
+
 
 /*----------------------------------- LOGIN ------------------------------------------------------*/
-//Router to Login page
-router.get('/login', auth.isNotLoggedIn, loginController);
-router.post('/login', loginValidationRules(), loginValidate, loginUserController);
+// GET route for login page
+router.get('/login', auth.isNotLoggedIn, userControllers.loginPage);
+// POST route for user login
+router.post('/login', loginValidationRules(), loginValidate, userControllers.login);
+
 
 /*----------------------------------- USER ACCOUNT ------------------------------------------------------*/
+// GET route for user account page
+// Middleware: Tillader kun adgang hvis bruger er logget ind.
+router.get('/account', userControllers.account);
 
-router.get('/account', auth.isLoggedIn, userAccountController);
+router.get('/account/:id', userControllers.account);
 
 
 /*-----------------------------------LOG OUT------------------------------------------------------*/
+// GET route for user logout
+// Middleware: Bruger kan kun logge ud, hvis denne allerede er logget ind.
+router.get('/logout', auth.isLoggedIn, userControllers.logout);
 
-router.get('/logout', auth.isLoggedIn, logoutController);
+
+/*-----------------------------------DELETE USER-----------------------------------------------------*/
+// DELETE route for deleting user
+// Middleware: Bruger skal være logget ind.
+router.delete('/user/delete/:id', auth.isLoggedIn, userControllers.deleteUser);
 
 
 /*----------------------------------- PRODUCTS -------------------------------------------------*/
-// PRODUCTS:
-// We try to show all products from the database.
-router.get('/products',  auth.isLoggedIn, cartMiddle.createCart, productGET);//
+// GET route for products page.
+// Viser alle produkter fra databasen.
+router.get('/products',  auth.isLoggedIn, auth.createCart, productControllers.productPage);//
 
 /*-----------------------------------LINEITEMS ------------------------------------------------------*/
-// LINEITEM:
-// Now, we'll try to make a page for the individual product.
-// We don't store the data in the database, so we make a GET-call instead of a STORE-call.
-// We store the things on the cookie-session thingy
-router.get('/lineitem/:id', lineItemSTORE);
 
+// PUT route for adding item to cart
+router.put('/lineitems/add/:id', lineItemControllers.add);
+// PUT route for removing one item from cart
+router.put('/lineitems/remove/:id', lineItemControllers.deleteOne);
+// DELETE route for deleting all of specific lineitem from cart
+router.delete('/lineitems/delete-all/:id', lineItemControllers.deleteAll);
 
-
-router.get('/remove-lineitem/:id', lineItemREMOVE);
-
-// Now, we access the controller to show all the lineItems when trying to access the route '/lineItems'
-router.get('/lineItems',lineItemGET);
-
-
-//router.get('/checkout', checkoutController);
 
 /*----------------------------------- DELIVERY ------------------------------------------------------*/
 // GET route for delivery-page
-router.get('/delivery-method', orderDetailsMiddle.cartNotEmpty, deliveryMethodGET );
+router.get('/checkout/delivery-method', auth.cartNotEmpty, deliveryMethodControllers.delivMethodPage );
 
-// POST route for delivery-page
-router.post('/delivery-method',  deliveryMethodController);
-
+// POST route for delivery-method information
+router.post('/checkout/delivery-method',  deliveryMethodControllers.create);
 
 
 /*----------------------------------- DELIEVRY-ADDRESS ------------------------------------------------------*/
-// GET
-router.get('/delivery-address', orderDetailsMiddle.deliveryTrue, /*orderDetailsMiddle.currentAddressInfo,*/ deliveryAddressGET);
+// GET route for delivery-address page
+// Middleware: Kun hvis bruger har valgt 'levering'. Ellers redirectes til 'payment'.
+router.get('/checkout/delivery-address', auth.deliveryTrue, addressControllers.addressPage);
 
-// POST
-router.post('/delivery-address', deliveryAddressController );
-
+// POST route for delivery-address information
+router.post('/checkout/delivery-address', addressControllers.create );
 
 
 /*----------------------------------- PAYMENT ------------------------------------------------------*/
-
 // GET route for payment-page
-router.get('/payment', orderDetailsMiddle.calcDeliveryFee, orderMiddle.cartTotalAmount, orderMiddle.orderTotalAmount, paymentGET)
+router.get('/checkout/payment', auth.checkPayment, paymentControllers.paymentPage);
 
-
-// POST route for payment
-router.post('/payment', orderMiddle.checkPayment, paymentController);
-
+// POST route for payment information
+// Middleware: Tjekker om bruger allerede har betalt for ordren før.
+router.post('/checkout/payment', paymentControllers.create);
 
 
 /*----------------------------------- ORDER ------------------------------------------------------*/
 // GET specific order
-
-router.get('/order/:id', orderController);
-
+router.get('/order/:id', orderControllers.findOne);
 
 
+/*----------------------------------- ORDER ------------------------------------------------------*/
+
+//router.get('/checkout/order/:id', auth.isLoggedIn, orderControllers.placeOrder);
+router.post('/checkout/order/:id', orderControllers.placeOrder);
+
+
+// DELETE specific order with status 'cart'
+router.delete('/cart/delete/:id', orderControllers.deleteCart);
+
+
+
+// Eksporterer 'router' så den er tilgængelig i app.js
 module.exports = router;
-
-
-
-
-
-
-
-
-
-/*----------------------------------- Index page call ----------------------------------------------------*
-// GET route for index-page
-router.get("/", auth.isLoggedIn, (req, res) => {
-
-        pool.query('SELECT * FROM product', function (err, result) {
-                if (err) {
-                        console.log(err);
-                        res.status(400).send(err);
-                }
-                res.render('index', {
-                        title: 'Index',
-                        data: result.rows,
-                        messages: {
-                                success: req.flash('success'),
-                                error: req.flash('error')
-                        }
-                });
-        });
-});
---*/
