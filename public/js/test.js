@@ -18,9 +18,7 @@ const cvcTest = 123;
 function testWithDelivery(){
     // Redirect til signup-page
     window.location="/signup";
-    window.onload=signup()
-
-
+    window.onload = signup()
 }
 
 function signup() {
@@ -29,7 +27,6 @@ function signup() {
     document.getElementById('email').value = emailTest;
     document.getElementById('password').value = passwordTest;
     document.getElementById('submit-signup').click();
-
 }
 
 
@@ -40,39 +37,40 @@ function login() {
 
 }
 
-
 function toCart() {
     window.location="/products";
 }
 
 
 function addItemsToCart() {
-    let addBtns = document.getElementsByClassName('addLineItem');
+    fetch('/lineitems/add/1', {
+        method: 'PUT'
 
-    for (let i=0; i < addBtns.length; i++) {
-        addBtns[i].click()
-    }
-    document.getElementById('order_button').click();
-};
+    }).then(result => {
+        fetch('/lineitems/add/2', {
+            method: 'PUT'
+        }).then(result => {
+            fetch('/lineitems/add/3', {
+                method: 'PUT'
+            }).then(result => {
+                $("#order_button").click()
+            })
+
+        })
+    }).catch(err => {
+        console.log(err);
+    })
+}
 
 
 
 function deliveryTrue() {
     document.getElementById('yes-delivery').click();
     document.getElementById('selectedTime').value = deliveryTime;
-
     document.getElementById('submit-delivery-information').click();
 
 }
 
-
-function deliveryAddress() {
-    document.getElementById('val_streetname').value = streetNameTest;
-    document.getElementById('val_streetnumber').value = streetNumberTest;
-    document.getElementById('val_zipcode').value = zipCodeTest;
-    document.getElementById('val_city').value = cityTest;
-    document.getElementById('submit-address-information').click();
-}
 
 
 function deliveryAddress() {
@@ -93,5 +91,68 @@ function payment() {
     document.getElementById('CVC').value = cvcTest;
     document.getElementById('paymentButton').click();
 
+};
+
+
+
+// With delivery
+function first(callback){
+    testWithDelivery();
+    callback();
+}
+
+function second(callback){
+    $("#testSignup").click();
+    callback();
+}
+
+function third(callback){
+    $("#testLogin").click();
+    callback();
+}
+function fourth(callback){
+    $("#testLogin").click();
+    callback();
+}
+function fifth(callback){
+    $("#toCart").click();
+    callback();
+}
+function sixth(callback){
+    $("#testCart").click();
+    callback();
+}
+function seventh(callback){
+    $("#testDelivery").click();
+    callback();
+}
+function eighth(callback){
+    $("#testDeliveryAddress").click();
+    callback();
+}
+
+
+function ninth(callback){
+    $("#testDeliveryAddress").click();
+    callback();
+}
+function test(callback) {
+    first(function() {
+        second(function() {
+            third(function() {
+                fourth(function(){
+                    fifth(function(){
+                        sixth(function(){
+                            seventh(function(){
+                                eighth(function(){
+                                    ninth(callback);
+                                })
+                            })
+                        })
+                    })
+                });
+            });
+        });
+    });
 }
 
