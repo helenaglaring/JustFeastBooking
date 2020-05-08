@@ -1,15 +1,11 @@
-/* set up configuration of  PostgreSQL connection. */
-/* src: https://blog.logrocket.com/setting-up-a-restful-api-with-node-js-and-postgresql-d96d6fc892d8/*/
 
-// Create Database and use the following credentials:
+/*------------------ SET UP configuration of PostgreSQL connection------------------------------------------*/
+// Forbindelse til Databasen etableres her
+
+// Opretter ny pool med  configuration:
 const { Pool } = require('pg');
-/*
-const connectionString = "postgres://postgres:postgres@localhost:5432/justfeastdb";
 
-const pool = new Pool( {
-    connectionString: connectionString
-});*/
-
+// Create new database instance and use the following credentials:
 const pool = new Pool( {
     host: "localhost",
     port: 5433,
@@ -18,6 +14,7 @@ const pool = new Pool( {
     password: "password",
 });
 
+// Acquires a client from the pool.
 pool.on('connect', () => {
     console.log('connected to the Database');
 });
