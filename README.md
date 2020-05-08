@@ -16,7 +16,7 @@ HTML, CSS, .EJS , PostgresSQL, Express, NodeJS
 - **Database**: postgreSQL 
 
 **DB Schema design - ERD** -
-![alt text](/ERD-JustFeastBooking.png)
+![alt text](/public/ERD-JustFeastBooking.png)
 
 ## How to run the program
 
