@@ -122,9 +122,9 @@ module.exports = {
                                 console.log("User-id:");
                                 console.log(req.session.user.userID);
 
-                                // Omdirigerer til user account side når bruger er logget succesfuldt ind
+                                // Omdirigerer til "menukort" /products. Har ændret til dette istedet for account
                                 req.flash('success', `Du er nu logget ind.`);
-                                res.redirect('account/' + user.userID);
+                                res.redirect('products');
                             } else {
                                 // Rejectes hvis det indtastede password ikke stemmer overens med det i db.
                                 req.flash('error', 'Forkert password');
@@ -151,33 +151,41 @@ module.exports = {
 
     // Account page call: GET route for user account
     account: (req, res) => {
-        let userID = req.params.id;
-        // Finder specifik bruger i db ud fra user_id
-        pool.query('SELECT * FROM "user" WHERE user_id = $1', [userID])
-            .then(result => {
-                if(result.rows[0]) {
-                    let {user_id, first_name, last_name, email, _password } = result.rows[0];
-                    let user = new User(user_id, first_name, last_name, email,_password);
-                    console.log(user);
-                    res.render('user/account', {
-                        title: 'Account',
-                        user: user,//req.session.user
-                        messages: {
-                            success: req.flash('success'),
-                            error: req.flash('error')
-                        }
-                    })
-                } else {
-                    req.flash('error', 'Ingen bruger fundet');
-                    res.redirect('/')
-                }
-            })
-            .catch(err => {
-                console.log(err);
-                req.flash('error', err);
-                res.redirect('/');
-            })
-    },
+        // Sætter userID til enten at hente fra session eller sætter det til et tomt objekt hvis der ikke findes noget i session
+        let userID = req.session.user.userID || {};
+        //If statement der eksekveres hvis userID er TRUE
+        if (userID) {
+            // Finder specifik bruger i db ud fra user_id
+            pool.query('SELECT * FROM "user" WHERE user_id = $1', [userID])
+                .then(result => {
+                    if (result.rows[0]) {
+                        let {user_id, first_name, last_name, email, _password} = result.rows[0];
+                        let user = new User(user_id, first_name, last_name, email, _password);
+                        console.log(user);
+                        res.render('user/account', {
+                            title: 'Account',
+                            user: user,//samme som req.session.user
+                            messages: {
+                                success: req.flash('success'),
+                                error: req.flash('error')
+                            }
+                        })
+                    } else {
+                        req.flash('error', 'Ingen bruger fundet');
+                        res.redirect('/')
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                    req.flash('error', err);
+                    res.redirect('/');
+                })
+        }
+        else{
+            console.log(err);
+            req.flash('error',err);
+            res.redirect('/');
+        }},
 
 
 
