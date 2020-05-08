@@ -66,7 +66,7 @@ router.post('/login', loginValidationRules(), loginValidate, userControllers.log
 /*----------------------------------- USER ACCOUNT ------------------------------------------------------*/
 // GET route for user account page
 // Middleware: Tillader kun adgang hvis bruger er logget ind.
-router.get('/account', userControllers.account);
+router.get('/account',auth.isLoggedIn, userControllers.account);
 
 router.get('/account/:id', userControllers.account);
 
