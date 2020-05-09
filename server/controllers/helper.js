@@ -6,6 +6,9 @@
 const jwt = require('jsonwebtoken');
 const secret = 'verysecret';
 
+// Importerer bcrypt der bruges til at kryptere password inden det gemmes i db
+const bcrypt = require('bcrypt');
+
 
 module.exports = {
     // Hjælpefunktion til at generere jwt-token i userControllers. Skal sikre at user_id bliver kryptiseret inden
@@ -17,5 +20,43 @@ module.exports = {
         return token;
     },
 
+    /**
+     * Hash Password Method
+     * @param {string} password
+     * @returns {string} returns hashed password
+     * Building a simple API with Nodejs, Expressjs, PostgreSQL DB, and JWT - 3
+     */
+    hashPassword(password) {
+        return bcrypt.hashSync(password, bcrypt.genSaltSync(8))
+        /*
+        bcrypt.hash(password, 10, (err, hash) => {
+            if (err) throw err;
+             else {
+                return hash;
+            }
+        })*/
+    },
+    /**
+     * comparePassword
+     * @param {string} hashPassword
+     * @param {string} password
+     * @returns {Boolean} return True or False
+     */
 
+    comparePassword(password, hashPassword) {
+        return bcrypt.compareSync(password, hashPassword);
+        /*
+        bcrypt.compare(hashPassword, password)
+            .then(compareResult => {
+                // Resolver hvis password matcher
+                if (compareResult) {
+                    console.log(true)
+                    return true;
+                } else {
+                    console.log(false)
+                    return false;
+                }
+            })
+    }*/
+    }
 };

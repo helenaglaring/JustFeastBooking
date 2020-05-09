@@ -38,12 +38,12 @@ const pgPool = new pg.Pool({
 
 // Server configuration
 const app = express ();
-const port = process.env.PORT || 3000; //kilde: https://www.youtube.com/watch?v=pKd0Rpw7O48
+const port = 3000;
 
 
 
 // Set views and view engine
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, '/server/views'));
 app.set('view engine', 'ejs');
 
 // Set up public files
@@ -82,7 +82,7 @@ app.use(flash());
 
 
 // Endpoints
-app.use('/', routes)
+app.use('/', routes);
 
 /*
 app.use('/user', userRoutes);

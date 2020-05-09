@@ -46,6 +46,7 @@ module.exports = {
             .then(result => {
                 // Instaniterer nyt DeliveryMethod-objekt med med oplysninger der er indsat i tabellen.
                 let newDelMethod = new DeliveryMethod(result.rows[0].delivery_id, result.rows[0].order_id, result.rows[0].delivery, result.rows[0].address_id, result.rows[0].delivery_time);
+
                 // Gemmer det nye newDelMethod-obejkt i session så det kan tilgås senere
                 req.session.delivery = newDelMethod;
 

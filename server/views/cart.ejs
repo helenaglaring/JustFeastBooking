@@ -19,7 +19,7 @@
             </thead>
 
             <tbody>
-            <% lineitems.forEach((lineitem, index) => { %>
+            <% lineitems.forEach((lineitem) => { %>
                 <% if (lineitem.qty > 0) {%>
                 <tr>
                     <th scope="row"><%= lineitem.product.productName %></th>

@@ -72,7 +72,6 @@ function deliveryTrue() {
 }
 
 
-
 function deliveryAddress() {
     document.getElementById('val_streetname').value = streetNameTest;
     document.getElementById('val_streetnumber').value = streetNumberTest;
@@ -91,10 +90,10 @@ function payment() {
     document.getElementById('CVC').value = cvcTest;
     document.getElementById('paymentButton').click();
 
-};
+}
 
 
-
+/*
 // With delivery
 function first(callback){
     testWithDelivery();
@@ -156,3 +155,4 @@ function test(callback) {
     });
 }
 
+*/

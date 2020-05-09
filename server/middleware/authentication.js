@@ -1,5 +1,7 @@
-/*JWT: https://github.com/timtamimi/node.js-passport.js-template/blob/master/lib/routes.js
-    https://www.js-tutorials.com/nodejs-tutorial/user-authentication-using-jwt-json-web-token-node-js/#*/
+/*JWT:
+1. https://github.com/timtamimi/node.js-passport.js-template/blob/master/lib/routes.js
+2. https://www.js-tutorials.com/nodejs-tutorial/user-authentication-using-jwt-json-web-token-node-js/#
+3. https://dev.to/mr_cea/remaining-stateless-jwt-cookies-in-node-js-3lle*/
 
 // Importerer moduler der bruges til at encode user-id som token gemt i session
 const jwt = require('jsonwebtoken');
@@ -18,6 +20,46 @@ const Cart = require('../models/LineItem');
 /*-------------------------Middleware for user authentication-------------------------------------------*/
 
 
+//-- Check om bruger er logget ind --//
+exports.isLoggedIn = function(req, res, next) {
+    const token = req.cookies['jwt-token'] || null;
+    console.log("Bruger er logget ind: "+ !!token );
+
+    try {
+        // Tjekker om cookies og jwt-token er sat. Hvis true er token null, derfor er !token = true og if statement kører.
+        if (!token) {
+            // Bruger ikke logget ind. Redirect hvis ikke req.cookies og jwt-token er sat.
+            req.flash('error', "Ingen bruger logget ind");
+            console.log("Ingen bruger logget ind");
+            res.redirect('/login');
+        } else {
+            // Continue hvis bruger er logget ind. token er true
+            // Verificerer token
+            const decoded = jwt.verify(token, secret);
+            // Bruger det decodede user_id til at finde den specifikke bruger fra user-tabellen.
+            // Finder specifik bruger i db ud fra user_id
+
+            pool.query('SELECT * FROM "user" WHERE user_id = $1', [decoded.user_id])
+                .then(result => {
+                    let {user_id, first_name, last_name, email, _password} = result.rows[0];
+                    let user = new User(user_id, first_name, last_name, email, _password);
+                    console.log("Bruger verificeret med ID: " + user.userID);
+
+                    // Set current logged in user in session
+                    req.session.user = user;
+                    next()
+                })
+                // query error
+                .catch(err => console.error('Error executing query', err.stack))
+        }
+    } catch (err){
+        console.log(err);
+        return res.status(500)
+    }
+
+};
+
+/* Gammel version. Har opdateret den
 //-- Check om bruger er logget ind --//
 exports.isLoggedIn = function(req, res, next) {
 
@@ -49,7 +91,7 @@ exports.isLoggedIn = function(req, res, next) {
     res.redirect('/login');
     }
 };
-
+*/
 
 
 //--  Check om bruger ikke er logget ind --//
@@ -217,8 +259,7 @@ function findPayment(orderID) {
                 reject(err);
             });
     });
-};
-
+}
 
 
 
