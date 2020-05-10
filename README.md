@@ -18,8 +18,8 @@ HTML, CSS, .EJS , PostgresSQL, Express, NodeJS
 **DB Schema design - ERD** -
 ![alt text](/public/ERD-JustFeastBooking.png)
 
-**Class diagram ** -
-![alt text](/public/Klassediagramv2.png)
+**Class diagram** -
+![alt text](/public/Klassediagram.v2.png)
 
 ## How to run the program
 
