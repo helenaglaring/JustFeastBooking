@@ -80,8 +80,11 @@ module.exports = {
                 WHERE order_id=$1 AND status='cart'`, [cartID])
             .then( result => {
                 // Nulstiller order og cart i session da cart=order skal slettes.
-                req.session.order = {};
-                req.session.cart = {};
+                req.session.order = null;
+                req.session.cart = null;
+                req.session.delivery = null;
+                req.session.deliveryAddress = null;
+
                 req.flash('succes', 'Nuværende kurv er slettet: ');
                 console.log(result);
                 console.log("Nuværende kurv er slettet");

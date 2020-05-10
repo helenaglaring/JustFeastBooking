@@ -185,7 +185,11 @@ exports.cartNotEmpty = function(req, res, next) {
         console.log("Ingen produkter i kurven: " + cart.totalQty);
         // Redirect to cart index page if no items in cart
         req.flash('error', 'Du har ingen produkter i kurven');
-        res.redirect('/products') // Redirect if not logged in
+       // res.redirect('/products') // Redirect if not logged in
+        return req.session.save(function (err) {
+            res.redirect('/products')
+        })
+
     } else {
         console.log("JUHU produkter i kurv - du kan fortsætte. Antal i kurv: " + cart.totalQty);
         return next();
@@ -201,10 +205,11 @@ exports.deliveryTrue = function(req, res, next) {
 
     console.log("Tjekker om 'levering' eller 'afhentning' er valgt...");
     let savedDeliveryInfo = req.session.delivery;
+    /*
     console.log("savedDeliveryInfo");
     console.log(savedDeliveryInfo);
     console.log("req.session.delivery");
-    console.log(req.session.delivery);
+    console.log(req.session.delivery);*/
 
     let deliveryMethod = req.session.delivery  ? req.session.delivery : {};
 
