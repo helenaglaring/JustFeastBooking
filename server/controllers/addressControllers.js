@@ -83,7 +83,10 @@ module.exports = {
             req.session.deliveryAddress = newDeliveryAddress;
 
             req.flash('success', "Leveringsoplysninger er registreret");
-            return res.redirect('/checkout/payment')
+            //return res.redirect('/checkout/payment')
+            return req.session.save(function (err) {
+                res.redirect('/checkout/payment')
+            })
 
 
         } catch (err) {

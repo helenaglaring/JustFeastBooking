@@ -247,12 +247,12 @@ exports.checkPayment = function (req, res, next) {
         .then(payment => {
             // Check if payment already has been made
             if (payment.isTrue === true) {
+                //Der er betalt
                 req.flash('error', 'Du har allerede betalt');
                 res.redirect('/order/' + orderID);
-                console.log("Der er betalt")
-                // Continue if no payment hasn't been made yet
             } else {
-                console.log("Der er ikke betalt");
+                // Continue if no payment hasn't been made yet
+                //Der er ikke betalt
                 next()
             }
         })
