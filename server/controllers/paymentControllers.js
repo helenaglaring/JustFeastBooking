@@ -11,7 +11,7 @@ module.exports = {
     paymentPage: (req, res) => {
         res.render('payment', {
             title: 'Payment',
-            cart: req.session.lineItems,
+            cart: req.session.cart,
             order: req.session.order,
             messages: {
                 success: req.flash('success'),
@@ -26,7 +26,7 @@ module.exports = {
         // Deklarerer variable der skal bruges til at instantiere nyt Payment-objekt.
         let userID = req.session.user.userID;
         let orderID = req.session.order.orderID;
-        let totalAmount = req.session.lineItems.totalPrice;
+        let totalAmount = req.session.cart.totalPrice;
         // Variable der assignes til værdierne fra req.body som er sendt via den submittede form.
         let {cardNumber, expiryDateMonth, expiryDateYear, CVC, cardHoldersName} = req.body;
 

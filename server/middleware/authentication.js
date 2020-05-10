@@ -13,8 +13,7 @@ const pool = require('../db/db');
 // Importerer modeller
 const User = require('../models/User');
 const Order = require('../models/Order.js');
-const Cart = require('../models/LineItem');
-
+const Cart = require('../models/Cart');
 
 
 /*-------------------------Middleware for user authentication-------------------------------------------*/
@@ -148,7 +147,8 @@ exports.createCart = function(req, res, next) {
                         console.log("Cart er blevet oprettet med ordre-ID: " + newOrderCart.orderID);
                         console.log(newOrderCart);
                         req.session.order = newOrderCart;
-                        req.session.lineItems = {};
+
+                        req.session.cart = {};
                         next()
                     })
                     .catch(err => {
@@ -176,7 +176,7 @@ exports.createCart = function(req, res, next) {
 
 //-- Middleware to GET delivery-method page, when user submits cart. Redirect if empty cart --//
 exports.cartNotEmpty = function(req, res, next) {
-    let oldCart = req.session.lineItems ? req.session.lineItems : {};
+    let oldCart = req.session.cart ? req.session.cart : {};
     // Instantierer et nyt Cart-objekt ud fra den eksisterende session.
     let cart = new Cart(oldCart.items, oldCart.totalQty, oldCart.totalPrice, oldCart.deliveryFee);
 
@@ -198,15 +198,33 @@ exports.cartNotEmpty = function(req, res, next) {
 
 //-- Middleware til GET delivery-address page. Kun hvis bruger har valgt levering "delivery"--//
 exports.deliveryTrue = function(req, res, next) {
-    // Bruger funktion fra DeliveryMethod-model, der returnerer 'delivery'-field fra record gemt i db.
-    let deliveryMethod = req.session.delivery ? req.session.delivery : {};
-    console.log(deliveryMethod);
-    if (deliveryMethod.deliveryIsTrue) {
-        return next()
-    } else {
-        // Hvis kunde tilgår siden uden at have valgt levering vises fejlbesked og omdirigeres til payment.
+    console.log("Tjekker om 'levering' eller 'afhentning' er valgt...");
+    let savedDeliveryInfo = req.session.delivery;
+
+    let deliveryMethod = req.session.delivery  ? req.session.delivery : {};
+
+    console.log("Levering/afhentningsoplysninger er gemt i session: " + !!savedDeliveryInfo);
+    console.log(" 'Levering' er valgt: " + !!deliveryMethod.deliveryIsTrue);
+
+    // Tjekker først om der er gemt et Delivery-Method objekt i req.session.delivery.
+    // Hvis savedDeliveryInfo='false' har kunde endnu ikke angivet levering/afhentningsoplysninger.
+    if (!savedDeliveryInfo) {
+        // Hvis kunde tilgår siden uden at have valgt leveringsmetode vises fejlbesked og omdirigeres til delivery-method.
+        console.log("Levering/afhentningsoplysninger er endnu ikke valgt. Omdirigerer til delivery.");
+        req.flash('error', "Du skal først angive om du ønsker 'levering' eller 'afhentning.");
+        res.redirect('/checkout/delivery-method')
+    }
+    // Else if undersøger om deliveryMethod.deliveryIsTrue er 'false'. Hvis dette er sandt eksekverers 'else if'
+    // og kunde omdirigeres til payment, da kunde har valgt 'Afhentning"
+
+    else if ( !deliveryMethod.deliveryIsTrue) {
+        // Hvis kunde tilgår siden selvom denne har valgt 'afhentning' vises fejlbesked og omdirigeres til payment.
+        console.log("AFHENTNING valgt. Ingen leveringsaddresse skal angives. Omdirigerer til payment");
         req.flash('error', 'Du har ikke valgt levering og skal derfor ikke angive leveringsoplysninger');
-        res.redirect('payment')
+        res.redirect('/checkout/payment')
+    } else {
+        console.log("'Levering' er valgt. Fortsætter til leveringsaddresse-siden");
+        next()
     }
 };
 

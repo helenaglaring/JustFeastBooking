@@ -24,7 +24,7 @@ const userControllers = require('../controllers/userControllers');
 const productControllers = require('../controllers/productControllers');
 
 // LINEITEM
-const lineItemControllers = require('../controllers/lineItemControllers');
+const lineItemControllers = require('../controllers/cartControllers');
 
 // DELIVERY-METHOD
 const deliveryMethodControllers = require('../controllers/deliveryMethodControllers');

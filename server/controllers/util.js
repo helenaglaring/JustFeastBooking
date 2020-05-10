@@ -1,7 +1,7 @@
 // Bruges ikke
 
 // LinjeitemGET.js
-const LineItem = require('../models/LineItem');
+const LineItem = require('../models/Cart');
 
 //const Product = require('../models/Product.js');
 
@@ -22,7 +22,7 @@ module.exports = (req,res)=> {
 
 //lineItemREMOVE.js
 const Product = require('../models/Product');
-const LineItem = require('../models/LineItem');
+const LineItem = require('../models/Cart');
 
 
 module.exports = (req, res)=> {
@@ -54,7 +54,7 @@ module.exports = (req, res)=> {
 
 // LineItem.STORE
 const Product = require('../models/Product');
-const LineItem = require('../models/LineItem');
+const LineItem = require('../models/Cart');
 
 
 module.exports = (req, res)=> {

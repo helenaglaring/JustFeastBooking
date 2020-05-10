@@ -4,7 +4,7 @@ const pool = require('../db/db');
 
 // Importerer modeller
 const DeliveryMethod = require('../models/DeliveryMethod.js');
-const Cart = require('../models/LineItem');
+const Cart = require('../models/Cart');
 
 module.exports = {
     // Delivery-method page call: GET route for delivery-method page
@@ -31,7 +31,7 @@ module.exports = {
         let d = new DeliveryMethod(null, orderID, delivery, null, selectedTime);
 
         // Instantierer et nyt Cart-objekt ud fra den eksisterende session.
-        let oldCart = req.session.lineItems ? req.session.lineItems : {};
+        let oldCart = req.session.cart ? req.session.cart : {};
         let cart = new Cart(oldCart.items, oldCart.totalQty, oldCart.totalPrice, oldCart.deliveryFee);
 
         //Indsætter oplysninger i 'delivery'-tabel.
@@ -47,20 +47,24 @@ module.exports = {
                 // Instaniterer nyt DeliveryMethod-objekt med med oplysninger der er indsat i tabellen.
                 let newDelMethod = new DeliveryMethod(result.rows[0].delivery_id, result.rows[0].order_id, result.rows[0].delivery, result.rows[0].address_id, result.rows[0].delivery_time);
 
-                // Gemmer det nye newDelMethod-obejkt i session så det kan tilgås senere
-                req.session.delivery = newDelMethod;
-
                 // If-else statement der tjekker om delivery-field er sand, og om kunde har valgt levering.
                 if (newDelMethod.deliveryIsTrue) {
                     // Hvis true har kunde valgt levering.
                     console.log("'Levering' er registreret:");
-                    console.log(req.session.delivery);
+                    console.log(newDelMethod);
                     // Tilføjer leveringsgebyr ved at insantiere Cart-objekt og bruge addDeliveryFee-metoden.
                     cart.addDeliveryFee(newDelMethod.deliveryIsTrue);
 
                     // Gemmer det opdaterede cart i session så deliveryFee og totalPrice er opdateret.
-                    req.session.lineItems = cart;
+                    req.session.cart = cart;
+                    console.log("Cart opdateret med leveringsoplysninger: ");
                     console.log(cart);
+
+                    // Gemmer det nye newDelMethod-obejkt i session så det kan tilgås senere
+                    req.session.delivery = newDelMethod;
+                    console.log("Levering er valgt: " + newDelMethod.deliveryIsTrue );
+                    console.log('DeliveryMethod objekt gemt i session: ');
+                    console.log(req.session.delivery );
 
                     // Omdirigerer til leverings-addresse hvis kunde har valgt levering
                     req.flash('success', "Leveringsmetode registreret: Levering.");
@@ -70,11 +74,18 @@ module.exports = {
                     // Hvis delivery===false har kunde valgt afhentning. Intet leveringsgebyr.
                     // Omdirigeres direkte til payment-side.
                     cart.addDeliveryFee(newDelMethod.deliveryIsTrue);
+
                     // Opdaterer cart i session så deliveryFee og totalPrice er opdateret.
-                    req.session.lineItems = cart;
+                    req.session.cart = cart;
+                    console.log("Cart opdateret med afhentningsoplysninger: ");
                     console.log(cart);
 
-                    console.log("Afhentning er valgt ");
+
+                    // Gemmer det nye newDelMethod-obejkt i session så det kan tilgås senere
+                    req.session.delivery = newDelMethod;
+                    console.log("Levering er valgt: " + newDelMethod.deliveryIsTrue );
+                    console.log('DeliveryMethod objekt gemt i session: ');
+                    console.log(req.session.delivery );
 
                     req.flash('success', "Leveringsmetode registreret: Afhent selv din bestilling.");
                     res.redirect('/checkout/payment')

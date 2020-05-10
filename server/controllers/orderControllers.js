@@ -3,7 +3,7 @@
 const pool = require('../db/db');
 
 // Importerer modeller
-const Cart = require('../models/LineItem');
+const Cart = require('../models/Cart');
 const Order = require('../models/Order.js');
 
 
@@ -69,9 +69,9 @@ module.exports = {
                 DELETE FROM "order"
                 WHERE order_id=$1 AND status='cart'`, [cartID])
             .then( result => {
-                // Nulstiller order og lineItems i session da cart=order skal slettes.
+                // Nulstiller order og cart i session da cart=order skal slettes.
                 req.session.order = {};
-                req.session.lineItems = {};
+                req.session.cart = {};
                 req.flash('succes', 'Nuværende kurv er slettet: ');
                 console.log(result);
                 console.log("Nuværende kurv er slettet");
@@ -106,21 +106,21 @@ module.exports = {
                 // Gemmer det opdaterede Order-objekt i session
                 req.session.order = newOrder;
 
-                // Deklarerer variabel 'oldCart' for req.session.lineItems. Bruger ternary expression til først at tjekke
-                // om req.session.lineItems er true. Hvis denne er false og altså 'tom' sættes værdien til et tomt objekt.
-                let oldCart = req.session.lineItems ? req.session.lineItems : {};
+                // Deklarerer variabel 'oldCart' for req.session.cart. Bruger ternary expression til først at tjekke
+                // om req.session.cart er true. Hvis denne er false og altså 'tom' sættes værdien til et tomt objekt.
+                let oldCart = req.session.cart ? req.session.cart : {};
 
                 // Instantierer et nyt Cart-objekt ud fra den eksisterende session.
                 let cart = new Cart(oldCart.items, oldCart.totalQty, oldCart.totalPrice, oldCart.deliveryFee);
 
-                // Gemmer lineitems i database ved at bruge createOrder-metode.
+                // Gemmer lineitems der er gemt i kundens cart i database ved at bruge createOrder-metode.
                 cart.createOrder(orderID);
 
                 // Redirect til side der viser oplysninger fra specifik ordre ud fra order_id
                 req.flash('success', "Tak for din bestilling");
 
-                // Nulstiller lineItems da ordrens status er ændret fra 'cart' til 'order'
-                req.session.lineItems = {};
+                // Nulstiller cart i session da ordrens status er ændret fra 'cart' til 'order'
+                req.session.cart = {};
 
                 // Redirect til route der henter den ordre der lige er blevet lagt.
                 res.redirect('/order/' + newOrder.orderID);

@@ -179,9 +179,15 @@ module.exports = {
             const token = Helper.generateToken(user.userID);
             res.cookie('jwt-token', token);
 
+            /*
             // Omdirigerer til user account side når bruger er logget succesfuldt ind
             req.flash('success', `Du er nu logget ind.`);
-            return res.redirect('account/' + user.userID);
+            return res.redirect('account/' + user.userID);*/
+
+            // Omdirigerer til bestillingsside når bruger er logget succesfuldt ind
+            req.flash('success', `Du er nu logget ind.`);
+            return res.redirect('products');
+
         } catch (err) {
             console.log(err);
             req.flash('error', 'der er sket en fejl');
@@ -301,6 +307,7 @@ module.exports = {
                     error: req.flash('error')
                 }
             })
+
         } catch (err) {
             console.log(err);
             return res.status(500);
@@ -358,12 +365,13 @@ module.exports = {
         // Deklarerer værdien gemt i session.order i variablen "order", hvis ikke der er gemt noget
         // Er der endnu ikke oprettet en ordre til kundens 'cart' og derfor sættes værdien til et tomt objkt.
         let order = req.session.order ? req.session.order : {};
+        let orderStatus = order.orderID ? order.status : {};
         console.log("Bruger har en kurv der skal slettes: " + !!order.orderID);
 
         try {
             // Bruger if-statement til at undersøge om der er oprettet en order med status som 'cart' i db.
-            // Hvis order=== undefined er der endnu ikke oprettet et cart, og derfor kommer man ikke ind i if-statement
-            if (order.orderID) {
+            // Hvis order.status==='cart er false eller undefined er der endnu ikke oprettet et cart, og derfor kommer man ikke ind i if-statement
+            if (order.orderID && orderStatus==="cart") {
                 console.log("Bruger har tilnyttet en ordre med status 'cart'...");
                 // Sørger for at slette order med status 'kurv' i db hvis kunde logger ud inden at have gennemført ordre.
                 // Funktion der sletter en order-record i databasen med status='cart' og det aktuelle order_id.

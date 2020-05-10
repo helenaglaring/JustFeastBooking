@@ -5,7 +5,7 @@ const pool = require('../db/db');
 
 // Importerer modeller
 const Product = require('../models/Product.js');
-const Cart = require('../models/LineItem.js');
+const Cart = require('../models/Cart.js');
 
 //-- Loader produkter fra database og viser dem på productPage --//
 module.exports = {
@@ -14,7 +14,7 @@ module.exports = {
         // Instantierer nyt objekt der fungerer som vores 'cart'. Skal bruges til at vise nuværende kurv i front-end.
         // Bruger ternary expression for at deklarere værdien fra det allerede eksisterende 'cart' i session til oldCart.
         // Hvis ikke der allerede eksisterer et cart vil req.session.lineItems være 'false' og værdien sættes til et tomt objekt.
-        let oldCart = req.session.lineItems ? req.session.lineItems : {};
+        let oldCart = req.session.cart ? req.session.cart : {};
 
         // Instantierer et nyt Cart-objekt ud fra den eksisterende lineItems i session.
         // Hvis oldCart var false instantieres attrubutternes værdier til {} eller 0 afhænigt af hvilke det er.
@@ -23,7 +23,7 @@ module.exports = {
         // Sætter variabel totalPrice der holder kurvens samlede pris.
         let totalPrice = cart.totalPrice ? cart.totalPrice : 0;
         console.log("Current cart items: ");
-        console.log(req.session.lineItems);
+        console.log(req.session.cart);
 
         // Finder alle produkter i databasen
         pool.query('SELECT * FROM product')
