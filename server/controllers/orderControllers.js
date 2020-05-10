@@ -111,7 +111,7 @@ module.exports = {
                 let oldCart = req.session.cart ? req.session.cart : {};
 
                 // Instantierer et nyt Cart-objekt ud fra den eksisterende session.
-                let cart = new Cart(oldCart.items, oldCart.totalQty, oldCart.totalPrice, oldCart.deliveryFee);
+                let cart = new Cart(oldCart.items, oldCart.totalQty, oldCart.totalPrice, oldCart.deliveryFee, oldCart.orderID);
 
                 // Gemmer lineitems der er gemt i kundens cart i database ved at bruge createOrder-metode.
                 cart.createOrder(orderID);
@@ -120,7 +120,9 @@ module.exports = {
                 req.flash('success', "Tak for din bestilling");
 
                 // Nulstiller cart i session da ordrens status er ændret fra 'cart' til 'order'
-                req.session.cart = {};
+                req.session.cart = null;
+                req.session.delivery = null;
+                req.session.deliveryAddress = null;
 
                 // Redirect til route der henter den ordre der lige er blevet lagt.
                 res.redirect('/order/' + newOrder.orderID);

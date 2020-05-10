@@ -14,11 +14,12 @@ const LineItem = require('../models/LineItem');
 // Hvis oldCart er et tomt objekt, sættes det til de tomme værdier.
 // items-attributten indeholder objektinstanser af LineItem-klassen og refererer det specifikke produkt
 module.exports = class Cart {
-    constructor(items, totalQty, totalPrice, deliveryFee) {
+    constructor(items, totalQty, totalPrice, deliveryFee, orderID) {
         this.items = items || {}; //lineitems
         this.totalQty = totalQty || 0;
         this.totalPrice = totalPrice || 0;
         this.deliveryFee = deliveryFee || 0;
+        this.orderID = orderID || 0;
     }
 
     // Metode der tilføjer produkter til cart

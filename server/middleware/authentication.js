@@ -178,7 +178,7 @@ exports.createCart = function(req, res, next) {
 exports.cartNotEmpty = function(req, res, next) {
     let oldCart = req.session.cart ? req.session.cart : {};
     // Instantierer et nyt Cart-objekt ud fra den eksisterende session.
-    let cart = new Cart(oldCart.items, oldCart.totalQty, oldCart.totalPrice, oldCart.deliveryFee);
+    let cart = new Cart(oldCart.items, oldCart.totalQty, oldCart.totalPrice, oldCart.deliveryFee, oldCart.orderID);
 
     // Continue if there are line items in cart
     if(cart.totalQty===0) {
@@ -198,8 +198,13 @@ exports.cartNotEmpty = function(req, res, next) {
 
 //-- Middleware til GET delivery-address page. Kun hvis bruger har valgt levering "delivery"--//
 exports.deliveryTrue = function(req, res, next) {
+
     console.log("Tjekker om 'levering' eller 'afhentning' er valgt...");
     let savedDeliveryInfo = req.session.delivery;
+    console.log("savedDeliveryInfo");
+    console.log(savedDeliveryInfo);
+    console.log("req.session.delivery");
+    console.log(req.session.delivery);
 
     let deliveryMethod = req.session.delivery  ? req.session.delivery : {};
 

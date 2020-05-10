@@ -18,7 +18,7 @@ module.exports = {
 
         // Instantierer et nyt Cart-objekt ud fra den eksisterende lineItems i session.
         // Hvis oldCart var false instantieres attrubutternes værdier til {} eller 0 afhænigt af hvilke det er.
-        let cart = new Cart(oldCart.items, oldCart.totalQty, oldCart.totalPrice, oldCart.deliveryFee);
+        let cart = new Cart(oldCart.items, oldCart.totalQty, oldCart.totalPrice, oldCart.deliveryFee, oldCart.orderID );
 
         // Sætter variabel totalPrice der holder kurvens samlede pris.
         let totalPrice = cart.totalPrice ? cart.totalPrice : 0;

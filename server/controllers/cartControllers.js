@@ -13,13 +13,14 @@ module.exports = {
     add: (req, res) => {
         // Først deklareres id af det valgte produkt til en variabel. Dette id er blevet sendt via API (:id)
         let productId = req.params.id;
+        let orderID = req.session.order.orderID;
 
         // Deklarerer variabel 'oldCart' for req.session.cart. Bruger ternary expression til først at tjekke
         // om req.session.cart er true. Hvis denne er false og altså 'tom' sættes værdien til et tomt objekt.
         let oldCart = req.session.cart ? req.session.cart : {};
 
         // Instantierer et nyt Cart-objekt ud fra den eksisterende session.
-        let cart = new Cart(oldCart.items, oldCart.totalQty, oldCart.totalPrice, oldCart.deliveryFee);
+        let cart = new Cart(oldCart.items, oldCart.totalQty, oldCart.totalPrice, oldCart.deliveryFee, orderID);
 
         // Henter specifikt produkt fra db ud fra produkt_id
         // Bruges til at knytte lineitems-product_id sammen med product_id.
@@ -47,7 +48,7 @@ module.exports = {
         let productId = req.params.id;
         let oldCart = req.session.cart ? req.session.cart : {};
         // Instantierer et nyt Cart-objekt ud fra den eksisterende session.
-        let cart = new Cart(oldCart.items, oldCart.totalQty, oldCart.totalPrice, oldCart.deliveryFee);
+        let cart = new Cart(oldCart.items, oldCart.totalQty, oldCart.totalPrice, oldCart.deliveryFee, oldCart.orderID);
 
         cart.deleteOne(productId);
         req.session.cart = cart;
@@ -62,7 +63,7 @@ module.exports = {
         let productId = req.params.id;
         let oldCart = req.session.cart ? req.session.cart : {};
         // Instantierer et nyt Cart-objekt ud fra den eksisterende session.
-        let cart = new Cart(oldCart.items, oldCart.totalQty, oldCart.totalPrice, oldCart.deliveryFee);
+        let cart = new Cart(oldCart.items, oldCart.totalQty, oldCart.totalPrice, oldCart.deliveryFee, oldCart.orderID);
         cart.deleteAll(productId);
         req.session.cart = cart;
         console.log( "Alle lineitems fjernet med productID: " );
