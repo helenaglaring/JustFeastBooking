@@ -112,7 +112,10 @@ module.exports = {
             if (!user) {
                 console.log("E-mail eksisterer Ikke.");
                 req.flash('error', 'E-mail eksisterer ikke');
-                return res.redirect('login');
+                // Gemmer session inden der redirectes så de gemte oplysninger kan tilgås.
+                return req.session.save(function (err) {
+                    res.redirect('login');
+                })
             }
             console.log("E-mail eksisterer. Verificerer password...");
 
@@ -122,7 +125,10 @@ module.exports = {
                 // Redirect til login hvis det indtastede password ikke stemmer overens med det i db.
                 console.log("Password ikke verificeret! ");
                 req.flash('error', 'Forkert password');
-                return res.redirect('login');
+                // Gemmer session inden redirect
+                return req.session.save(function (err) {
+                    res.redirect('login');
+                })
             }
             console.log("password verificeret ...");
 
@@ -137,13 +143,19 @@ module.exports = {
 
             // Omdirigerer til bestillingsside når bruger er logget succesfuldt ind
             req.flash('success', `Du er nu logget ind.`);
-            return res.redirect('products');
+
+            // Gemmer session inden der redirectes
+            return req.session.save(function (err) {
+                return res.redirect('products');
+            })
 
         } catch (err) {
             console.log(err);
             req.flash('error', 'der er sket en fejl');
-            // RENDERING loginpage med validation errors
-            return res.redirect('login');
+            // RENDERING loginpage med validation errors. Gemmer session inden redirect
+            return req.session.save(function (err) {
+                res.redirect('login');
+            })
         }
     },
 
@@ -232,7 +244,7 @@ module.exports = {
                     return console.log(err);
                 }
                 console.log("Bruger er logget ud");
-                return res.redirect('login');
+                return res.redirect('/');
             });
         } catch (err) {
             console.log(err);
