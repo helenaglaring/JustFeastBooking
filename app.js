@@ -18,16 +18,8 @@ const pg = require('pg')
 
 const flash = require('connect-flash');
 
-// Import routehandlers
+// Import route handlers
 const routes = require('./server/routes/index');
-
-const userRoutes = require('./server/routes/userRoutes');
-
-const cartRoutes = require('./server/routes/cartRoutes');
-const checkoutRoutes = require('./server/routes/checkoutRoutes');
-/*
-const cartRoutes = require('./server/routes/cart');
-const orderRoutes = require('./server/routes/order');*/
 
 
 const pgPool = new pg.Pool({
@@ -88,14 +80,6 @@ app.use(flash());
 // Endpoints
 app.use('/', routes);
 
-app.use('/user', userRoutes);
-app.use('/cart', cartRoutes);
-app.use('/checkout', checkoutRoutes);
-
-/*
-app.use('/cart', cartRoutes);
-app.use('/order', orderRoutes);
-*/
 
 
 // Error-handling middleware. Kilde: https://www.hacksparrow.com/webdev/express/custom-error-pages-404-and-500.html
