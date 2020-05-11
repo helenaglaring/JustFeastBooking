@@ -9,10 +9,9 @@ const Order = require('../models/Order.js');
 
 // GET specific order
 module.exports = {
+
     // GET order ud fra orderID i params :id.
     // Funktion der henter specifik ordre fra db ud fra order_id. Bruges til at vise ordre-bekræftelse når kunde har gennemført betaling.
-
-
     findOne: async(req, res) => {
         let orderID = req.params.id;
         // Finder specifik ordre i db ud fra parameter givet i URL params der består af order_id.
@@ -41,6 +40,7 @@ module.exports = {
                 });
 
             if (!newOrder) {
+                // newOrder vil være false hvis ikke den fandt en order med det givne order_id.
                 req.flash('error', 'Ingen ordre fundet');
                 console.log("Ingen ordre med givne ordreID");
                 return res.redirect('/');
@@ -53,7 +53,7 @@ module.exports = {
             // Responderer med ordre-side der viser oplysninger fra den givne ordre.
             res.render('order', {
                 title: 'Order',
-                order: newOrder,
+                order: newOrder, // Viser det gemte Order-objekt.
                 messages: {
                     success: req.flash('success'),
                     error: req.flash('error')
@@ -62,7 +62,6 @@ module.exports = {
         } catch (err) {
             console.log(err);
             req.flash('error', 'der er sket en fejl');
-            // RENDERING loginpage med validation errors
             return res.redirect('/');
         }
     },
@@ -73,8 +72,10 @@ module.exports = {
     // Sletter en order-record i databasen med status='cart' og det aktuelle order_id.
     // Bruges når kunde ønsker at slette sin kurv eller når bruger logger ud uden at have bestilt.
     deleteCart: (req, res) => {
+        // Parameteren er sendt som :id og er det nuværende order_id.
         let cartID = req.params.id;
-        // Bruger funktionen delteOne fra Order-model. Parameteren er sendt som :id og er det nuværende order_id.
+
+        // Sletter row i Order-tabel med det givne order_id.
         pool.query(`
                 DELETE FROM "order"
                 WHERE order_id=$1 AND status='cart'`, [cartID])
@@ -154,8 +155,7 @@ module.exports = {
             return res.redirect('/checkout/payment');
         }
     },
-
-
+};
 
 
 /*
@@ -208,7 +208,7 @@ module.exports = {
     },
 
  */
-};
+
 
 /* Nyeste "gamle" version af findOne.
 // GET order ud fra orderID i params :id.

@@ -8,6 +8,7 @@ const pool = require('../db/db');
 // Importerer modeller
 const User = require('../models/User');
 const Order = require('../models/Order.js');
+
 // Importerer Hjælpefunktioner der genererer jwt-token i userControllers. Skal sikre at user_id bliver kryptiseret inden det gemmes i session.
 // Og funktioner der bruger  bcrypt til at kryptere  password inden det gemmes i db og  verificere password ved login
 const Helper = require('./helper');
@@ -49,12 +50,13 @@ module.exports = {
                 req.flash('error', 'Email eksisterer allerede.');
                 return res.redirect('signup')
             }
-            console.log("Email er unik og ny bruger kan oprettes...");
             // Email er unik og ny bruger kan oprettes.
+            console.log("Email er unik og ny bruger kan oprettes...");
+
             // bruger Helperfunktion der bruger bcrypt til at hashe brugerens submittede password.
             const hashPassword = Helper.hashPassword(user.password);
 
-            // Now we can store the password hash in db.
+            // Nu kan vi gemme de hashede password i db.
             // Indsætter bruger i db med værdier fra form og hashed-psw
             let newUser = await pool.query(`INSERT INTO "user" (first_name, last_name, _password, email)
                         VALUES ($1, $2, $3, $4) RETURNING *`, [user.firstname, user.lastname, hashPassword, user.email])
@@ -79,59 +81,8 @@ module.exports = {
             console.log(err);
             return res.redirect('signup');
         }
-
-    },
-    /* Gammel signup route
-    // POST route for user signup
-    // Funktion der opretter ny bruger og gemmer i databasen.
-    // Argumentet er det objekt som bruger har sumbittet fra form og er valideret vha. user-validation middleware.
-    signup: (req,res) => {
-        let {first_name, last_name, email, password} = req.body;
-
-        // Opretter ny bruger ud fra valideret form-data.
-        // Tjekker først om email allerede eksisterer i user-tabel. Tager email som parameter.
-        pool.query('SELECT user_id FROM "user" WHERE email = $1', [email])
-            .then(result => {
-                if (result.rows[0]) {
-                    // Redirect hvis email allerede eksisterer.
-                    req.flash('error', 'Email eksisterer allerede.');
-                    res.redirect('signup')
-                }
-                // Email er unik og ny bruger kan oprettes.
-                else {
-                    // bruger Helperfunktion der bruger bcrypt til at hashe brugerens submittede password.
-                    const hashPassword = Helper.hashPassword(password);
-                    // Now we can store the password hash in db.
-                    // Indsætter bruger i db med værdier fra form og hashed-psw
-                    pool.query(`INSERT INTO "user" (first_name, last_name, _password, email)
-                        VALUES ($1, $2, $3, $4) RETURNING *`, [first_name, last_name, hashPassword, email])
-                        .then(result => {
-                            // Returnerer user-record der lige er blevet sat ind i db
-                            let {user_id, first_name, last_name, email, _password} = result.rows[0];
-                            let newUser = new User(user_id, first_name, last_name, email, _password);
-                            console.log("Ny bruger oprettet:");
-                            console.log(newUser);
-
-                            // Omdirigerer til login-side når bruger er succesfuldt oprettet.
-                            req.flash('success', "Bruger oprettet");
-                            res.redirect('login');
-                        })
-                        .catch(err => {
-                            // Ved fejl og validation errors reloades siden med respektive fejlbeskeder.
-                            console.log(err);
-                            res.redirect('signup');
-                        });
-                        }
-
-            })
-            .catch(err => {
-                // Ved fejl og validation errors reloades siden med respektive fejlbeskeder.
-                console.log(err);
-                res.redirect('signup');
-            });
     },
 
-     */
 
     // Login page call: GET route for user login
     loginPage: (req, res) => {
@@ -197,77 +148,7 @@ module.exports = {
     },
 
 
-    /*
-        // POST route for user login
-        login: (req, res) => {
-            let {email, password} = req.body;
-            console.log(email);
-            // Bruger login-funktion fra User-model til at logge bruger ind
-            pool.query('SELECT * FROM "user" WHERE email = $1', [email])
-                .then(result => {
-                    if(result.rows[0]) {
-                        let {user_id, first_name, last_name, email, _password} = result.rows[0];
-                        let user = new User(user_id, first_name, last_name, email, _password);
 
-                        console.log("E-mail eksisterer");
-                        console.log(user);
-                        bcrypt.compare(password, user.password)
-                            .then(compareResult => {
-                                // Resolver hvis password matcher
-                                if (compareResult) {
-                                    // Sætter user_id som JWT-token når bruger er logget ind
-                                    const token = Helper.generateToken(user.userID);
-                                    res.cookie('jwt-token', token);
-
-                                    // Gemmer logget ind user i session
-                                    req.session.user = user;
-                                    console.log("User-id obj:");
-                                    console.log(req.session.user);
-                                    console.log("User-id:");
-                                    console.log(req.session.user.userID);
-
-                                    // Omdirigerer til "menukort" /products. Har ændret til dette istedet for account
-                                    req.flash('success', `Du er nu logget ind.`);
-                                    res.redirect('products');
-                                } else {
-                                    // Rejectes hvis det indtastede password ikke stemmer overens med det i db.
-                                    req.flash('error', 'Forkert password');
-                                    res.redirect('login');
-                                }
-                            })
-                            .catch((err) => {
-                                throw err;
-                            });
-                    } else {
-                        req.flash('error', 'E-mail eksisterer ikke');
-                        res.redirect('login');
-                    }
-                })
-                .catch(err => {
-                    console.log(err);
-                    req.flash('error', 'der er sket en fejl');
-                    // RENDERING loginpage med validation errors
-                    res.redirect('login');
-                })
-        },
-    */
-    /*
-        try {
-            // Bruger login-funktion fra User-model til at logge bruger ind
-            let user = await pool.query('SELECT * FROM "user" WHERE email = $1', [email])
-                .then(result => {
-                    let {user_id, first_name, last_name, email, _password} = result.rows[0];
-                    return new User(user_id, first_name, last_name, email, _password);
-                })
-                // query error
-                .catch(err => {
-                    return console.error('Error executing query', err.stack)
-                });
-    if (!user) {
-        console.log("E-mail eksisterer Ikke.");
-        req.flash('error', 'E-mail eksisterer ikke');
-        return res.redirect('login');
-    }*/
 
     // Account page call: GET route for user account
     account: async (req, res) => {
@@ -314,47 +195,6 @@ module.exports = {
         }
     },
 
-
-    /* // Gammel version
-        // Account page call: GET route for user account
-        account: (req, res) => {
-            // Sætter userID til enten at hente fra session eller sætter det til et tomt objekt hvis der ikke findes noget i session
-            let userID = req.session.user.userID || req.params.id || {};
-            //If statement der eksekveres hvis userID er TRUE
-            if (userID) {
-                // Finder specifik bruger i db ud fra user_id
-                pool.query('SELECT * FROM "user" WHERE user_id = $1', [userID])
-                    .then(result => {
-                        if (result.rows[0]) {
-                            let {user_id, first_name, last_name, email, _password} = result.rows[0];
-                            let user = new User(user_id, first_name, last_name, email, _password);
-                            console.log(user);
-                            res.render('user/account', {
-                                title: 'Account',
-                                user: user,//samme som req.session.user
-                                messages: {
-                                    success: req.flash('success'),
-                                    error: req.flash('error')
-                                }
-                            })
-                        } else {
-                            req.flash('error', 'Ingen bruger fundet');
-                            res.redirect('/')
-                        }
-                    })
-                    .catch(err => {
-                        console.log(err);
-                        req.flash('error', err);
-                        res.redirect('/');
-                    })
-            }
-            else{
-                console.log(err);
-                req.flash('error',err);
-                res.redirect('/');
-            }},
-
-    */
 
     // GET route for user logout
     // Sletter også session
@@ -444,6 +284,183 @@ module.exports = {
         }
     }
 };
+
+
+
+
+/* Nyeste gamle signup route
+  // POST route for user signup
+  // Funktion der opretter ny bruger og gemmer i databasen.
+  // Argumentet er det objekt som bruger har sumbittet fra form og er valideret vha. user-validation middleware.
+  signup: (req,res) => {
+      let {first_name, last_name, email, password} = req.body;
+
+      // Opretter ny bruger ud fra valideret form-data.
+      // Tjekker først om email allerede eksisterer i user-tabel. Tager email som parameter.
+      pool.query('SELECT user_id FROM "user" WHERE email = $1', [email])
+          .then(result => {
+              if (result.rows[0]) {
+                  // Redirect hvis email allerede eksisterer.
+                  req.flash('error', 'Email eksisterer allerede.');
+                  res.redirect('signup')
+              }
+              // Email er unik og ny bruger kan oprettes.
+              else {
+                  // bruger Helperfunktion der bruger bcrypt til at hashe brugerens submittede password.
+                  const hashPassword = Helper.hashPassword(password);
+                  // Now we can store the password hash in db.
+                  // Indsætter bruger i db med værdier fra form og hashed-psw
+                  pool.query(`INSERT INTO "user" (first_name, last_name, _password, email)
+                      VALUES ($1, $2, $3, $4) RETURNING *`, [first_name, last_name, hashPassword, email])
+                      .then(result => {
+                          // Returnerer user-record der lige er blevet sat ind i db
+                          let {user_id, first_name, last_name, email, _password} = result.rows[0];
+                          let newUser = new User(user_id, first_name, last_name, email, _password);
+                          console.log("Ny bruger oprettet:");
+                          console.log(newUser);
+
+                          // Omdirigerer til login-side når bruger er succesfuldt oprettet.
+                          req.flash('success', "Bruger oprettet");
+                          res.redirect('login');
+                      })
+                      .catch(err => {
+                          // Ved fejl og validation errors reloades siden med respektive fejlbeskeder.
+                          console.log(err);
+                          res.redirect('signup');
+                      });
+                      }
+
+          })
+          .catch(err => {
+              // Ved fejl og validation errors reloades siden med respektive fejlbeskeder.
+              console.log(err);
+              res.redirect('signup');
+          });
+  },
+
+   */
+
+
+
+/* Nyeste gamle login
+       // POST route for user login
+       login: (req, res) => {
+           let {email, password} = req.body;
+           console.log(email);
+           // Bruger login-funktion fra User-model til at logge bruger ind
+           pool.query('SELECT * FROM "user" WHERE email = $1', [email])
+               .then(result => {
+                   if(result.rows[0]) {
+                       let {user_id, first_name, last_name, email, _password} = result.rows[0];
+                       let user = new User(user_id, first_name, last_name, email, _password);
+
+                       console.log("E-mail eksisterer");
+                       console.log(user);
+                       bcrypt.compare(password, user.password)
+                           .then(compareResult => {
+                               // Resolver hvis password matcher
+                               if (compareResult) {
+                                   // Sætter user_id som JWT-token når bruger er logget ind
+                                   const token = Helper.generateToken(user.userID);
+                                   res.cookie('jwt-token', token);
+
+                                   // Gemmer logget ind user i session
+                                   req.session.user = user;
+                                   console.log("User-id obj:");
+                                   console.log(req.session.user);
+                                   console.log("User-id:");
+                                   console.log(req.session.user.userID);
+
+                                   // Omdirigerer til "menukort" /products. Har ændret til dette istedet for account
+                                   req.flash('success', `Du er nu logget ind.`);
+                                   res.redirect('products');
+                               } else {
+                                   // Rejectes hvis det indtastede password ikke stemmer overens med det i db.
+                                   req.flash('error', 'Forkert password');
+                                   res.redirect('login');
+                               }
+                           })
+                           .catch((err) => {
+                               throw err;
+                           });
+                   } else {
+                       req.flash('error', 'E-mail eksisterer ikke');
+                       res.redirect('login');
+                   }
+               })
+               .catch(err => {
+                   console.log(err);
+                   req.flash('error', 'der er sket en fejl');
+                   // RENDERING loginpage med validation errors
+                   res.redirect('login');
+               })
+       },
+   */
+/*
+    try {
+        // Bruger login-funktion fra User-model til at logge bruger ind
+        let user = await pool.query('SELECT * FROM "user" WHERE email = $1', [email])
+            .then(result => {
+                let {user_id, first_name, last_name, email, _password} = result.rows[0];
+                return new User(user_id, first_name, last_name, email, _password);
+            })
+            // query error
+            .catch(err => {
+                return console.error('Error executing query', err.stack)
+            });
+if (!user) {
+    console.log("E-mail eksisterer Ikke.");
+    req.flash('error', 'E-mail eksisterer ikke');
+    return res.redirect('login');
+}*/
+
+
+
+
+
+
+/*
+    // Nyeste gamle version af account
+    // Account page call: GET route for user account
+    account: (req, res) => {
+        // Sætter userID til enten at hente fra session eller sætter det til et tomt objekt hvis der ikke findes noget i session
+        let userID = req.session.user.userID || req.params.id || {};
+        //If statement der eksekveres hvis userID er TRUE
+        if (userID) {
+            // Finder specifik bruger i db ud fra user_id
+            pool.query('SELECT * FROM "user" WHERE user_id = $1', [userID])
+                .then(result => {
+                    if (result.rows[0]) {
+                        let {user_id, first_name, last_name, email, _password} = result.rows[0];
+                        let user = new User(user_id, first_name, last_name, email, _password);
+                        console.log(user);
+                        res.render('user/account', {
+                            title: 'Account',
+                            user: user,//samme som req.session.user
+                            messages: {
+                                success: req.flash('success'),
+                                error: req.flash('error')
+                            }
+                        })
+                    } else {
+                        req.flash('error', 'Ingen bruger fundet');
+                        res.redirect('/')
+                    }
+                })
+                .catch(err => {
+                    console.log(err);
+                    req.flash('error', err);
+                    res.redirect('/');
+                })
+        }
+        else{
+            console.log(err);
+            req.flash('error',err);
+            res.redirect('/');
+        }},
+
+*/
+
 
 
 

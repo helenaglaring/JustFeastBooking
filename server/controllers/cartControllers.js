@@ -51,10 +51,12 @@ module.exports = {
         let cart = new Cart(oldCart.items, oldCart.totalQty, oldCart.totalPrice, oldCart.deliveryFee, oldCart.orderID);
 
         cart.deleteOne(productId);
-        req.session.cart = cart;
+
         console.log( "Lineitem fjernet med productID: " );
         console.log(productId);
 
+        // Opdaterer cart i session
+        req.session.cart = cart;
         res.redirect('/products');
     },
 
@@ -62,12 +64,17 @@ module.exports = {
     deleteAll: (req, res) => {
         let productId = req.params.id;
         let oldCart = req.session.cart ? req.session.cart : {};
+
         // Instantierer et nyt Cart-objekt ud fra den eksisterende session.
         let cart = new Cart(oldCart.items, oldCart.totalQty, oldCart.totalPrice, oldCart.deliveryFee, oldCart.orderID);
+
+        // Bruger Cart-klassens deleteAll metode til at slette alle lineitems med givne produktID
         cart.deleteAll(productId);
-        req.session.cart = cart;
+
         console.log( "Alle lineitems fjernet med productID: " );
         console.log(productId);
+        req.session.cart = cart;
+
         res.redirect('/products');
     },
 

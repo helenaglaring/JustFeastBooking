@@ -25,7 +25,6 @@ module.exports = {
         let deliveryID = req.session.delivery.deliveryID;
         let {streetname, streetnumber, zipcode, city} = req.body;
         let delAddr = new Address(null, deliveryID, streetname, streetnumber, zipcode, city);
-        console.log(delAddr);
 
         try {
             let newDeliveryAddress = await pool.query(`
@@ -36,7 +35,7 @@ module.exports = {
                 RETURNING *`
                 , [deliveryID, delAddr.streetName, delAddr.streetNumber, delAddr.zipCode, delAddr.city])
                 .then(result => {
-                    // Returnere den indsatte række med addresse-oplysninger.
+                    // Opdaterer objektet med addressID-attribut og returnerer objektet
                     delAddr.addressID = result.rows[0].address_id;
                     return delAddr;
                     // let {address_id, delivery_id, streetname, streetnumber, zipcode, city} = result.rows[0];
@@ -62,7 +61,6 @@ module.exports = {
                         )
                         WHERE delivery_id=$1 RETURNING *`, [newDeliveryAddress.deliveryID])
                 .then(result => {
-                    // Returnere den indsatte række med addresse-oplysninger.
                     let {delivery_id, order_id, delivery, address_id, delivery_time} = result.rows[0];
                     // Instaniterer nyt DeliveryMethod-objekt med med oplysninger der er indsat i tabellen.
                     return new DeliveryMethod(delivery_id, order_id, delivery, address_id, delivery_time);
@@ -87,7 +85,6 @@ module.exports = {
             return req.session.save(function (err) {
                 res.redirect('/checkout/payment')
             })
-
 
         } catch (err) {
             // Omdirigerer ved fejl

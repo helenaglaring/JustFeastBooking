@@ -35,7 +35,7 @@ module.exports = {
         let cart = new Cart(oldCart.items, oldCart.totalQty, oldCart.totalPrice, oldCart.deliveryFee);
 
         try {
-            //Indsætter oplysninger i 'delivery'-tabel.
+            //Indsætter oplysninger i 'delivery'-tabel. Den indsatte row gemmes i variablen newDelMethod.
             let newDelMethod = await pool.query(`
                 INSERT INTO delivery (order_id, delivery, delivery_time)
                 VALUES ($1, $2,$3)
@@ -45,7 +45,7 @@ module.exports = {
                 , [orderID, d.deliveryIsTrue, d.deliveryTime])
                 .then(result => {
                     let {delivery_id, order_id, delivery, address_id, delivery_time} = result.rows[0];
-                    // Instaniterer nyt DeliveryMethod-objekt med med oplysninger der er indsat i tabellen.
+                    // Instaniterer nyt DeliveryMethod-objekt med med oplysninger der er indsat i tabellen og returnerer
                     return new DeliveryMethod(delivery_id, order_id, delivery, address_id, delivery_time);
                 })
                 // query error
@@ -58,6 +58,7 @@ module.exports = {
                 // Hvis true har kunde valgt levering.
                 console.log("'Levering' er registreret:");
                 console.log(newDelMethod);
+
                 // Tilføjer leveringsgebyr ved at insantiere Cart-objekt og bruge addDeliveryFee-metoden.
                 cart.addDeliveryFee(newDelMethod.deliveryIsTrue);
 
@@ -74,6 +75,8 @@ module.exports = {
 
                 // Omdirigerer til leverings-addresse hvis kunde har valgt levering
                 req.flash('success', "Leveringsmetode registreret: Levering.");
+
+                // Gemmer session inden der redirectes så de gemte oplysninger kan tilgås.
                 //return res.redirect('/checkout/delivery-address')
                 return req.session.save(function (err) {
                     console.log("Session Before Redirect: ", req.session.delivery);
@@ -82,7 +85,9 @@ module.exports = {
 
             } else {
                 // Hvis delivery===false har kunde valgt afhentning. Intet leveringsgebyr.
-                // Omdirigeres direkte til payment-side.
+                // Kunde skal omdirigeres direkte til payment-side.
+
+                // Bruger Cart-klassens addDeliveryFee-metode til at tilføje leveringsgebyr hvis deliveryIsTrue===true
                 cart.addDeliveryFee(newDelMethod.deliveryIsTrue);
 
                 // Opdaterer cart i session så deliveryFee og totalPrice er opdateret.
