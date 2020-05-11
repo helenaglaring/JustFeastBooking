@@ -48,7 +48,9 @@ module.exports = {
             if (rows[0]) {
                 // Redirect hvis email allerede eksisterer.
                 req.flash('error', 'Email eksisterer allerede.');
-                return res.redirect('signup')
+                return req.session.save(function (err) {
+                    return res.redirect('/user/signup')
+                })
             }
             // Email er unik og ny bruger kan oprettes.
             console.log("Email er unik og ny bruger kan oprettes...");
@@ -74,12 +76,14 @@ module.exports = {
             console.log(newUser);
             // Omdirigerer til login-side når bruger er succesfuldt oprettet.
             req.flash('success', "Bruger oprettet");
-            return res.redirect('login');
+            return req.session.save(function (err) {
+                return res.redirect('/user/login')
+            })
 
         } catch (error) {
             // Ved fejl og validation errors reloades siden med respektive fejlbeskeder.
             console.log(err);
-            return res.redirect('signup');
+            return res.redirect('/user/signup');
         }
     },
 
@@ -114,7 +118,7 @@ module.exports = {
                 req.flash('error', 'E-mail eksisterer ikke');
                 // Gemmer session inden der redirectes så de gemte oplysninger kan tilgås.
                 return req.session.save(function (err) {
-                    res.redirect('login');
+                    res.redirect('/user/login');
                 })
             }
             console.log("E-mail eksisterer. Verificerer password...");
@@ -127,7 +131,7 @@ module.exports = {
                 req.flash('error', 'Forkert password');
                 // Gemmer session inden redirect
                 return req.session.save(function (err) {
-                    res.redirect('login');
+                    res.redirect('/user/login');
                 })
             }
             console.log("password verificeret ...");
@@ -146,7 +150,7 @@ module.exports = {
 
             // Gemmer session inden der redirectes
             return req.session.save(function (err) {
-                return res.redirect('products');
+                return res.redirect( '/products');
             })
 
         } catch (err) {
@@ -154,7 +158,7 @@ module.exports = {
             req.flash('error', 'der er sket en fejl');
             // RENDERING loginpage med validation errors. Gemmer session inden redirect
             return req.session.save(function (err) {
-                res.redirect('login');
+                res.redirect('/user/login');
             })
         }
     },
@@ -173,7 +177,9 @@ module.exports = {
             if (!userID) {
                 console.log("req.session.user.userID eller req.params.id er false");
                 req.flash('error', "Ingen bruger logget ind!!");
-                return res.redirect('/');
+                return req.session.save(function (err) {
+                    res.redirect('/');
+                })
             }
             // Finder specifik bruger i db ud fra user_id
             let user = await pool.query('SELECT * FROM "user" WHERE user_id = $1', [userID])
@@ -187,7 +193,9 @@ module.exports = {
                 });
             if (!user) {
                 req.flash('error', 'Ingen bruger fundet');
-                return res.redirect('/')
+                return req.session.save(function (err) {
+                    res.redirect('/');
+                })
             }
             console.log("Bruger fundet i db. Omdirigerer til bruger-account for user: ");
             console.log(user);
@@ -274,7 +282,9 @@ module.exports = {
             if (!deletedUser) {
                 console.log("Der skete en fejl. Bruger er ikke slettet");
                 req.flash('error', "Der skete en fejl. Bruger er ikke slettet");
-                return res.redirect('account');
+                return req.session.save(function (err) {
+                    res.redirect('/account');
+                })
             }
 
             console.log("Bruger er slettet fra db: ");
@@ -282,7 +292,6 @@ module.exports = {
 
             // jwt-cookies og session skal også slettes når bruger slettes
             res.clearCookie("jwt-token");
-            req.flash('success', "Bruger slettet");
             req.session.destroy(err => {
                 if (err) {
                     return console.log(err);

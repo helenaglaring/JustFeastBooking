@@ -13,7 +13,7 @@ function addLineItem () {
             let productID = addBtn.id;
             console.log(productID);
 
-            fetch('/lineitems/add/'+ productID, {
+            fetch('/cart/lineitems/add/'+ productID, {
                 method: 'PUT'
             })
                 .then(json => {
@@ -34,7 +34,7 @@ function removeLineItem () {
             let product_id = removeBtn.id;
             console.log(product_id);
 
-            fetch('/lineitems/remove/'+ product_id, {
+            fetch('/cart/lineitems/remove/'+ product_id, {
                 method: 'PUT'
             })
                 .then(json => {
@@ -56,7 +56,7 @@ function deleteLineItems () {
             let product_id = deleteBtn.id;
             console.log(product_id);
 
-            fetch('/lineitems/delete-all/'+ product_id, {
+            fetch('/cart/lineitems/delete-all/'+ product_id, {
                 method: 'DELETE'
             })
                 .then(json => {

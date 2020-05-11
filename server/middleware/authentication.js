@@ -21,8 +21,10 @@ const Cart = require('../models/Cart');
 
 //-- Check om bruger er logget ind --//
 exports.isLoggedIn = function(req, res, next) {
+    console.log("-----------------Authentication: isLoggedIn------------------------");
     const token = req.cookies['jwt-token'] || null;
     console.log("Bruger er logget ind: "+ !!token );
+
 
     try {
         // Tjekker om cookies og jwt-token er sat. Hvis true er token null, derfor er !token = true og if statement kører.
@@ -30,7 +32,10 @@ exports.isLoggedIn = function(req, res, next) {
             // Bruger ikke logget ind. Redirect hvis ikke req.cookies og jwt-token er sat.
             req.flash('error', "Ingen bruger logget ind");
             console.log("Ingen bruger logget ind");
-            res.redirect('/login');
+
+            return req.session.save(function (err) {
+                res.redirect('/user/login');
+            })
         } else {
             // Continue hvis bruger er logget ind. token er true
             // Verificerer token
@@ -43,10 +48,11 @@ exports.isLoggedIn = function(req, res, next) {
                     let {user_id, first_name, last_name, email, _password} = result.rows[0];
                     let user = new User(user_id, first_name, last_name, email, _password);
                     console.log("Bruger verificeret med ID: " + user.userID);
-
                     // Set current logged in user in session
                     req.session.user = user;
-                    next()
+                    return req.session.save(function (err) {
+                        next()
+                    })
                 })
                 // query error
                 .catch(err => console.error('Error executing query', err.stack))
@@ -95,13 +101,16 @@ exports.isLoggedIn = function(req, res, next) {
 
 //--  Check om bruger ikke er logget ind --//
 exports.isNotLoggedIn = function(req, res, next) {
+    console.log("-----------------Authentication: isNotLoggedIn------------------------");
     // Continue hvis ingen bruger er logget ind
     if(!req.session.user) {
         next();
     } else {
         // Redirect til user account side hvis bruger allerede er logget ind.
         req.flash('error', 'Du er allerede logget ind som bruger: ' + req.session.user.firstname);
-        res.redirect('account/'+ req.session.user.userID)
+        return req.session.save(function (err) {
+            res.redirect('/user/account/'+ req.session.user.userID)
+        })
     }
 };
 
@@ -116,6 +125,7 @@ exports.isNotLoggedIn = function(req, res, next) {
 // Bruges i createCart middleware til at undersøge om den givne kunde allerede har en 'kurv
 
 exports.createCart = function(req, res, next) {
+    console.log("-----------------Authentication: createCart------------------------");
     let userID = req.session.user.userID;
     // Find order-record i order-tabel med specifikt user_id
     pool.query( `SELECT * FROM "order" WHERE user_id = $1 AND status='cart'`, [userID])
@@ -131,7 +141,9 @@ exports.createCart = function(req, res, next) {
                 console.log("Nuværende ordre: ");
                 req.session.order = oldOrderCart;
                 console.log(req.session.order);
-                next();
+                return req.session.save(function (err) {
+                    next();
+                })
             } else {
                 // Opretter ny ordre med status som 'cart'. Gemmer nuværende cart i session.
                 // Funktion der opretter ny 'order'-record i order-tabel med status 'cart'.
@@ -147,9 +159,11 @@ exports.createCart = function(req, res, next) {
                         console.log("Cart er blevet oprettet med ordre-ID: " + newOrderCart.orderID);
                         console.log(newOrderCart);
                         req.session.order = newOrderCart;
-
                         req.session.cart = {};
-                        next()
+                        console.log()
+                        return req.session.save(function (err) {
+                            next();
+                        })
                     })
                     .catch(err => {
                         console.log(err)
@@ -176,6 +190,7 @@ exports.createCart = function(req, res, next) {
 
 //-- Middleware to GET delivery-method page, when user submits cart. Redirect if empty cart --//
 exports.cartNotEmpty = function(req, res, next) {
+    console.log("-----------------Authentication: cartNotEmpty------------------------");
     let oldCart = req.session.cart ? req.session.cart : {};
     // Instantierer et nyt Cart-objekt ud fra den eksisterende session.
     let cart = new Cart(oldCart.items, oldCart.totalQty, oldCart.totalPrice, oldCart.deliveryFee, oldCart.orderID);
@@ -185,7 +200,7 @@ exports.cartNotEmpty = function(req, res, next) {
         console.log("Ingen produkter i kurven: " + cart.totalQty);
         // Redirect to cart index page if no items in cart
         req.flash('error', 'Du har ingen produkter i kurven');
-       // res.redirect('/products') // Redirect if not logged in
+        // res.redirect('/products') // Redirect if not logged in
         return req.session.save(function (err) {
             res.redirect('/products')
         })
@@ -202,14 +217,10 @@ exports.cartNotEmpty = function(req, res, next) {
 
 //-- Middleware til GET delivery-address page. Kun hvis bruger har valgt levering "delivery"--//
 exports.deliveryTrue = function(req, res, next) {
+    console.log("-----------------Authentication: deliveryTrue------------------------");
 
     console.log("Tjekker om 'levering' eller 'afhentning' er valgt...");
     let savedDeliveryInfo = req.session.delivery;
-    /*
-    console.log("savedDeliveryInfo");
-    console.log(savedDeliveryInfo);
-    console.log("req.session.delivery");
-    console.log(req.session.delivery);*/
 
     let deliveryMethod = req.session.delivery  ? req.session.delivery : {};
 
@@ -222,7 +233,9 @@ exports.deliveryTrue = function(req, res, next) {
         // Hvis kunde tilgår siden uden at have valgt leveringsmetode vises fejlbesked og omdirigeres til delivery-method.
         console.log("Levering/afhentningsoplysninger er endnu ikke valgt. Omdirigerer til delivery.");
         req.flash('error', "Du skal først angive om du ønsker 'levering' eller 'afhentning.");
-        res.redirect('/checkout/delivery-method')
+        return req.session.save(function (err) {
+            res.redirect('/checkout/delivery-method')
+        })
     }
     // Else if undersøger om deliveryMethod.deliveryIsTrue er 'false'. Hvis dette er sandt eksekverers 'else if'
     // og kunde omdirigeres til payment, da kunde har valgt 'Afhentning"
@@ -231,7 +244,10 @@ exports.deliveryTrue = function(req, res, next) {
         // Hvis kunde tilgår siden selvom denne har valgt 'afhentning' vises fejlbesked og omdirigeres til payment.
         console.log("AFHENTNING valgt. Ingen leveringsaddresse skal angives. Omdirigerer til payment");
         req.flash('error', 'Du har ikke valgt levering og skal derfor ikke angive leveringsoplysninger');
-        res.redirect('/checkout/payment')
+        return req.session.save(function (err) {
+            res.redirect('/checkout/payment')
+        })
+
     } else {
         console.log("'Levering' er valgt. Fortsætter til leveringsaddresse-siden");
         next()
@@ -246,6 +262,7 @@ exports.deliveryTrue = function(req, res, next) {
 // Bruges i checkPayment middleware til at undersøge, om der allerede er en betaling knytttet til denne ordre.
 
 exports.checkPayment = function (req, res, next) {
+    console.log("-----------------Authentication: checkPayment------------------------");
     let orderID = req.session.order.orderID;
 
     findPayment(orderID)
@@ -254,7 +271,9 @@ exports.checkPayment = function (req, res, next) {
             if (payment.isTrue === true) {
                 //Der er betalt
                 req.flash('error', 'Du har allerede betalt');
-                res.redirect('/order/' + orderID);
+                return req.session.save(function (err) {
+                    res.redirect('/order/' + orderID);
+                })
             } else {
                 // Continue if no payment hasn't been made yet
                 //Der er ikke betalt
@@ -264,8 +283,11 @@ exports.checkPayment = function (req, res, next) {
         .catch(err => {
             console.log(err);
             req.flash('error', 'noget gik galt');
-            res.redirect('payment');
-            });
+
+            return req.session.save(function (err) {
+                res.redirect('/checkout/payment');
+            })
+        });
 };
 
 

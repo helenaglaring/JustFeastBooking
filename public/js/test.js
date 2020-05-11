@@ -17,7 +17,7 @@ const cvcTest = 123;
 // With delivery
 function testWithDelivery(){
     // Redirect til signup-page
-    window.location="/signup";
+    window.location="/user/signup";
     window.onload = signup()
 }
 
@@ -43,14 +43,14 @@ function toCart() {
 
 
 function addItemsToCart() {
-    fetch('/lineitems/add/1', {
+    fetch('/cart/lineitems/add/1', {
         method: 'PUT'
 
     }).then(result => {
-        fetch('/lineitems/add/2', {
+        fetch('/cart/lineitems/add/2', {
             method: 'PUT'
         }).then(result => {
-            fetch('/lineitems/add/3', {
+            fetch('/cart/lineitems/add/3', {
                 method: 'PUT'
             }).then(result => {
                 $("#order_button").click()

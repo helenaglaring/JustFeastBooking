@@ -35,7 +35,10 @@ module.exports = {
                 req.session.cart = cart;
                 console.log( "Lineitem Tilføjet til kurv:" );
                 console.log(product);
-                res.redirect('/products');
+                // HTTTP status code 303 for redirect til GET req
+                return req.session.save(function (err) {
+                    res.redirect(303, '/products');
+                })
             })
         .catch(err => {
             console.log(err);
@@ -57,7 +60,9 @@ module.exports = {
 
         // Opdaterer cart i session
         req.session.cart = cart;
-        res.redirect('/products');
+        return req.session.save(function (err) {
+            res.redirect(303, '/products');
+        })
     },
 
     // Funktion der sletter alle lineitems af den givne produkt-type som kunden har i sin 'kurv'.
@@ -75,7 +80,8 @@ module.exports = {
         console.log(productId);
         req.session.cart = cart;
 
-        res.redirect('/products');
+        return req.session.save(function (err) {
+            res.redirect(303, '/products');
+        })
     },
-
 };

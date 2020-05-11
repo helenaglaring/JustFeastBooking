@@ -49,13 +49,17 @@ module.exports = {
                 req.session.payment = newPayment;
 
                 // Redirecter til POST route der placerer ordre.
-                res.redirect(307, '/checkout/order/' + orderID);
+                return req.session.save(function (err) {
+                    res.redirect(307, '/checkout/order/' + orderID);
+                })
             })
             .catch(err => {
                 console.log(err);
                 // Redirect ved fejl
-                req.flash('error', 'Noget gik helt  galt');
-                res.redirect('/checkout/payment');
+                req.flash('error', 'Noget gik galt');
+                return req.session.save(function (err) {
+                    res.redirect('/checkout/payment');
+                })
             });
     }
 };

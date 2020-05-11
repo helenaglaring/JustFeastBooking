@@ -91,7 +91,9 @@ module.exports = {
                 console.log("Nuværende kurv er slettet");
 
                 // Fetch i frontend omdirigerer til homepage
-                res.end();
+                return req.session.save(function (err) {
+                    res.end();
+                })
 
             })
             .catch(err => {
@@ -146,13 +148,13 @@ module.exports = {
             // Redirect til route der henter den ordre der lige er blevet lagt.
             //return res.redirect('/order/' + newOrder.orderID);
             return req.session.save(function (err) {
-                return res.redirect('/order/' + newOrder.orderID);
+                return res.redirect(303, '/order/' + newOrder.orderID);
             })
 
         } catch (err) {
             console.log(err);
             req.flash('error', 'der er sket en fejl');
-            return res.redirect('/checkout/payment');
+            return res.redirect(303, '/checkout/payment');
         }
     },
 };

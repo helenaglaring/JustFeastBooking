@@ -16,7 +16,7 @@ const pool = new Pool( {
 
 // Acquires a client from the pool.
 pool.on('connect', () => {
-    console.log('connected to the Database');
+    console.log('connected to the Database: ');
 });
 
 /*

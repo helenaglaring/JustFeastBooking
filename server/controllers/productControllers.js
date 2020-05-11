@@ -36,7 +36,6 @@ module.exports = {
                 }
                 console.log("Alle Produkter i databasen: ");
                 console.log(products);
-
                 // Render siden der viser produkter
                 res.render('productShow', {
                     title: 'Menu-cart',

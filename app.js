@@ -20,8 +20,12 @@ const flash = require('connect-flash');
 
 // Import routehandlers
 const routes = require('./server/routes/index');
+
+const userRoutes = require('./server/routes/userRoutes');
+
+const cartRoutes = require('./server/routes/cartRoutes');
+const checkoutRoutes = require('./server/routes/checkoutRoutes');
 /*
-const userRoutes = require('./server/routes/user');
 const cartRoutes = require('./server/routes/cart');
 const orderRoutes = require('./server/routes/order');*/
 
@@ -84,8 +88,11 @@ app.use(flash());
 // Endpoints
 app.use('/', routes);
 
-/*
 app.use('/user', userRoutes);
+app.use('/cart', cartRoutes);
+app.use('/checkout', checkoutRoutes);
+
+/*
 app.use('/cart', cartRoutes);
 app.use('/order', orderRoutes);
 */

@@ -6,7 +6,6 @@
 const { check, validationResult } = require('express-validator');
 
 
-
 // Deklarerer signupValidationRules der tjekker om kunde har indtastet valide oplysninger under signup.
 const signupValidationRules = () => {
     return [
@@ -34,7 +33,10 @@ const signupValidate = (req, res, next) => {
     req.flash('error', err_val_messages);
 
     // RENDERING loginpage with validation errors
-    res.redirect('signup');
+    return req.session.save(function (err) {
+        res.redirect('/user/signup');
+    })
+
 };
 
 
@@ -60,7 +62,9 @@ const loginValidate = (req, res, next) => {
     req.flash('error', err_val_messages);
 
     // RENDERING loginpage with validation errors
-    res.redirect('login');
+    return req.session.save(function (err) {
+        res.redirect('/user/login');
+    })
 };
 
 module.exports = {
