@@ -1,7 +1,7 @@
-/*
-Model:
-https://github.com/anthonynsimon/node-postgres-registration/blob/master/models/user.js
- */
+
+
+
+
 
 /*-----------------------------------USER MODEL---------------------------------------------*/
 
@@ -20,6 +20,8 @@ module.exports = class User {
 
 /*----------------------------------- Skraldespand  ------------------------------------------------------*/
 /* GAMLE. Samme funktionalitet flyttet til controllers.
+Kilde: https://github.com/anthonynsimon/node-postgres-registration/blob/master/models/user.js
+
 module.exports = {
     // Funktion der opretter ny bruger og gemmer i databasen.
     // Argumentet er det objekt som bruger har sumbittet fra form og er valideret vha. user-validation middleware.

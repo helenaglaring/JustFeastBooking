@@ -62,7 +62,7 @@ app.use(session({
     secret: 'keyboard cat',
     resave: false,
     saveUninitialized: true,
-    cookie: { maxAge: 180 * 60 * 1000 } // How long a session should live in ms, 1 hour.
+    cookie: { maxAge: 180 * 60 * 1000 } // Hvor længe en session varer i ms.
 }));
 
 
