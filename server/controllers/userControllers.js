@@ -1,6 +1,3 @@
-// kilde: https://github.com/anthonynsimon/node-postgres-registration/blob/master/models/user.js
-// Login routehandler: https://www.codementor.io/@olawalealadeusi896/building-a-simple-api-with-nodejs-expressjs-postgresql-db-and-jwt-3-mke10c5c5
-
 /*----------------------------------- USER CONTROLLERS  ------------------------------------------------------*/
 // Database-connection
 const pool = require('../db/db');
@@ -307,9 +304,13 @@ module.exports = {
 };
 
 
+// Inspiration fra følgende link til implementering af nogle af vores funktioner i userControllers.js
+// https://github.com/anthonynsimon/node-postgres-registration/blob/master/models/user.js
+// Login routehandler: https://www.codementor.io/@olawalealadeusi896/building-a-simple-api-with-nodejs-expressjs-postgresql-db-and-jwt-3-mke10c5c5
 
 
-/* Nyeste gamle signup route
+/*----------------------------------- Skraldespand ------------------------------------------------------*/
+/* GAMLE 1
   // POST route for user signup
   // Funktion der opretter ny bruger og gemmer i databasen.
   // Argumentet er det objekt som bruger har sumbittet fra form og er valideret vha. user-validation middleware.
@@ -363,7 +364,7 @@ module.exports = {
 
 
 
-/* Nyeste gamle login
+/* GAMLE 1: login
        // POST route for user login
        login: (req, res) => {
            let {email, password} = req.body;
@@ -438,8 +439,6 @@ if (!user) {
 
 
 
-
-
 /*
     // Nyeste gamle version af account
     // Account page call: GET route for user account
@@ -486,8 +485,9 @@ if (!user) {
 
 
 
-/* GAMLE. Virkede med de funktioner i modellaget inden vi implementerede klasser,
-// START GAMLE
+/* GAMLE 2
+Virkede med de funktioner i modellaget inden vi implementerede klasser,
+
 module.exports = {
     // Signup page call: GET route for user signup
     signupPage: (req,res) => {
@@ -636,4 +636,3 @@ module.exports = {
             })
     }
 };*/
-/// SLUT GAMLE

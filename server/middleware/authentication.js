@@ -1,7 +1,3 @@
-/*JWT:
-1. https://github.com/timtamimi/node.js-passport.js-template/blob/master/lib/routes.js
-2. https://www.js-tutorials.com/nodejs-tutorial/user-authentication-using-jwt-json-web-token-node-js/#
-3. https://dev.to/mr_cea/remaining-stateless-jwt-cookies-in-node-js-3lle*/
 
 // Importerer moduler der bruges til at encode user-id som token gemt i session
 const jwt = require('jsonwebtoken');
@@ -63,40 +59,6 @@ exports.isLoggedIn = function(req, res, next) {
     }
 
 };
-
-/* Gammel version. Har opdateret den
-//-- Check om bruger er logget ind --//
-exports.isLoggedIn = function(req, res, next) {
-
-    // Tjekker om cookies og jwt-token er sat. Hvis true er bruger logget ind.
-    if(req.cookies && req.cookies['jwt-token']) {
-        // Continue hvis bruger er logget ind
-        // Verificerer token
-        const decoded = jwt.verify(req.cookies['jwt-token'], secret);
-
-        // Bruger det decodede user_id til at finde den specifikke bruger fra user-tabellen.
-        // Finder specifik bruger i db ud fra user_id
-        pool.query('SELECT * FROM "user" WHERE user_id = $1', [decoded.user_id])
-            .then(result => {
-                let {user_id, first_name, last_name, email, _password } = result.rows[0];
-                let user = new User(user_id, first_name, last_name, email,_password);
-                //console.log("Bruger er logget ind med ID: " + user.userID);
-                req.session.user = user;
-                next()
-
-            })
-            .catch(err => {
-                console.log("Der er sket en fejl");
-                console.log(err);
-            })
-    } else {
-    // Bruger ikke logget ind. Redirect hvis ikke req.cookies og jwt-token er sat.
-    req.flash('error', "Ingen bruger logget ind");
-    console.log("Ingen bruger logget ind");
-    res.redirect('/login');
-    }
-};
-*/
 
 
 //--  Check om bruger ikke er logget ind --//
@@ -312,8 +274,46 @@ function findPayment(orderID) {
 }
 
 
+/* JWT:
+1. https://github.com/timtamimi/node.js-passport.js-template/blob/master/lib/routes.js
+2. https://www.js-tutorials.com/nodejs-tutorial/user-authentication-using-jwt-json-web-token-node-js/#
+3. https://dev.to/mr_cea/remaining-stateless-jwt-cookies-in-node-js-3lle*/
 
 
+/*----------------------------------- Skraldespand ------------------------------------------------------*/
+/* Gammel version. Har opdateret den
+//-- Check om bruger er logget ind --//
+exports.isLoggedIn = function(req, res, next) {
+
+    // Tjekker om cookies og jwt-token er sat. Hvis true er bruger logget ind.
+    if(req.cookies && req.cookies['jwt-token']) {
+        // Continue hvis bruger er logget ind
+        // Verificerer token
+        const decoded = jwt.verify(req.cookies['jwt-token'], secret);
+
+        // Bruger det decodede user_id til at finde den specifikke bruger fra user-tabellen.
+        // Finder specifik bruger i db ud fra user_id
+        pool.query('SELECT * FROM "user" WHERE user_id = $1', [decoded.user_id])
+            .then(result => {
+                let {user_id, first_name, last_name, email, _password } = result.rows[0];
+                let user = new User(user_id, first_name, last_name, email,_password);
+                //console.log("Bruger er logget ind med ID: " + user.userID);
+                req.session.user = user;
+                next()
+
+            })
+            .catch(err => {
+                console.log("Der er sket en fejl");
+                console.log(err);
+            })
+    } else {
+    // Bruger ikke logget ind. Redirect hvis ikke req.cookies og jwt-token er sat.
+    req.flash('error', "Ingen bruger logget ind");
+    console.log("Ingen bruger logget ind");
+    res.redirect('/login');
+    }
+};
+*/
 
 
 

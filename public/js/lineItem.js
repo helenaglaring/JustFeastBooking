@@ -16,7 +16,7 @@ function addLineItem () {
             fetch('/cart/lineitems/add/'+ productID, {
                 method: 'PUT'
             })
-                .then(json => {
+                .then(res => {
                     location.reload()
                 })
         });

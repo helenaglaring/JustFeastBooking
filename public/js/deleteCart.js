@@ -13,8 +13,6 @@ delBtn.addEventListener('click', deleteCart);
 // Efterfølgende fetch'er vi  API kaldet: cart/delete/:id
 // Den bruger DELETE-metoden og redirecter til product-siden
 function deleteCart () {
-        console.log("Eventlistener submit");
-
         // Deklarerer variabel der holder værdien af det nuværende order_id. Dette er sat som value-attribut i ejs-templaten.
         let order_id = delBtn.value;
         console.log(order_id);
@@ -23,7 +21,7 @@ function deleteCart () {
         fetch('/cart/delete/'+ order_id, {
             method: 'DELETE'
         })
-            .then( json => {
+            .then( res => {
             location.href = "http://localhost:3000/products";
         })
 };

@@ -15,7 +15,7 @@ module.exports = class Order {
 };
 
 
-
+/*----------------------------------- Skraldespand  ------------------------------------------------------*/
 /* GAMLE. Samme funktionalitet flyttet til controllers.
 //START GEMT
 module.exports = {

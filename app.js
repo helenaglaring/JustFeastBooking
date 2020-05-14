@@ -1,4 +1,4 @@
-// Kilde: https://medium.com/@selvaganesh93/how-node-js-middleware-works-d8e02a936113
+
 /*--app.js--------------------------APP configuration -----------------------------------------------------*/
 
 
@@ -103,4 +103,6 @@ app.listen(port, () => {
     console.log(`App running on port ${port}.`)
 });
 
+
+// Kilde: https://medium.com/@selvaganesh93/how-node-js-middleware-works-d8e02a936113
 

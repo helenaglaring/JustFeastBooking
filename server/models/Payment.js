@@ -16,7 +16,7 @@ module.exports = class Payment {
 };
 
 
-
+/*----------------------------------- Skraldespand  ------------------------------------------------------*/
 /* GAMLE. Samme funktionalitet flyttet til controllers.
 module.exports = {
     // Funktion der indsætter payment-oplysninger i payment-tabel når kunde submitter valideret form.

@@ -15,7 +15,7 @@ module.exports = class DeliveryMethod {
     }
 };
 
-
+/*----------------------------------- Skraldespand  ------------------------------------------------------*/
 /* GAMLE. Samme funktionalitet flyttet til controllers.
 module.exports = {
     // Funktion der indsætter delivery-method oplysninger i database, når bruger submitter valideret form.

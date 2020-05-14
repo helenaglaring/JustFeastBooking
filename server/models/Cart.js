@@ -123,7 +123,7 @@ module.exports = class Cart {
 };
 
 
-
+/*----------------------------------- Skraldespand ------------------------------------------------------*/
 /* Add-metoden inden implementering af 'lineItem-klasse'.
  add(product, id) {
         let storedItem =  this.items[id];
@@ -150,95 +150,9 @@ module.exports = class Cart {
 * */
 
 
+/*----------------------------------- Skraldespand 2 ------------------------------------------------------*/
+/* Her blev lineitems indsat direkte i databasen
 
-
-/* NYESTE af gamle version. Samme funktionalitet flyttet til controllers.
-// LineItem fungerer som vores 'cart'. Deklarer en constructor-funktion med de attributter som vores cart skal have.
-// Tager et 'gammelt' cart-objekt som parameter. Hvis det eksisterer i forvejen instantieres et cart med de eksisterende værdier
-// Hvis oldCart er et tomt objekt, sættes det til de tomme værdier.
-module.exports = function cart(oldCart){
-    this.items = oldCart.items || {};
-    this.totalQty = oldCart.totalQty || 0;
-    this.totalPrice = oldCart.totalPrice || 0;
-    this.deliveryFee = oldCart.deliveryFee || 0;
-
-    // Metode der tilføjer produkter til cart
-    // Den gør at Qty bliver opdateret i stedet for bare at tilføje endnu et objekt med samme id.
-    // Dette gøres ved at opdatere en persons lineItem hver gang ved hjælp af følgende funktion.
-    this.add = function(product, id){
-        let storedItem =  this.items[id];
-        if (!storedItem){
-            storedItem = this.items[id] = {product: product, qty: 0, price: 0};
-        }
-        storedItem.qty++;
-        storedItem.price = storedItem.product.product_price * storedItem.qty;
-        this.totalQty++;
-        this.totalPrice += storedItem.product.product_price;
-    };
-
-    // Metode der fjerner et lineitem fra cart ved at decrease Qty med 1.
-    this.deleteOne = function(product, id) {
-        this.items[id].qty--;
-        this.items[id].price -= this.items[id].product.product_price;
-        this.totalQty--;
-        this.totalPrice -= this.items[id].product.product_price;
-        // Hvis antallet af det specifikke lineitem er <=0 fjernes det helt fra this.items.
-        if(this.items[id].qty <= 0) {
-            delete this.items[id];
-        }
-    };
-
-    // Metode der sletter alle lineitems med givent product_id.
-    this.deleteAll = function(id) {
-        this.totalQty -=this.items[id].qty;
-        this.totalPrice -=this.items[id].price;
-        delete this.items[id];
-        console.log("Alle lineitems af dette produkt fjernet fra kurv. ");
-    };
-
-    // Metode der opretter array med alle lineitems i this.items-objektet.
-    // Bruges til at vise de lineitems der er i nuværende kurv til klienten.
-    this.generateArray = function () {
-        let arr = [];
-        for (let id in this.items){
-            arr.push(this.items[id]);
-        }
-        return arr
-    };
-
-    // Metode der tilføjer deliveryFee. Bruges når kunde submitter delivery-method form.
-    this.addDeliveryFee = function () { // Sikrer at deliveryFee ikke tilføjes flere gange
-        if (this.deliveryFee <= 0) {
-            this.deliveryFee = 45;
-            this.totalPrice += this.deliveryFee; // Tilføjer deliveryFee oven i ordren
-            console.log("Leveringsgebyr på 45 kr. er tilføjet.");
-        }
-    };
-
-    //Metode der gemmer de lineitems kunde har lagt i kurv i db når kunden accepterer sin betaling.
-    this.createOrder = function (order_id) {
-        // Bruger for-loop til at iterere gennem de forskellige produkt-typer i items, og for hver indsætte de givne værdier i lineitems-tabel.
-        for ( let id in this.items) {
-            pool.query(`
-                INSERT INTO lineitem (product_id, order_id, qty, lineitem_price)
-                VALUES ($1, $2, $3, $4)
-                ON CONFLICT (product_id, order_id)
-                DO UPDATE SET qty = $3
-                RETURNING *
-    `, [this.items[id].product.product_id, order_id, this.items[id].qty, this.items[id].product.product_price])
-                .then(result => {
-                    console.log("LineItems gemt i database: ");
-                    console.log(result.rows[0]); // Rækker for hver lineitem-type.
-                });
-        }
-    }
-};
-
-
-
-
-/*Oprindelig
-// When ever we recreate our lineItem in the this.add we pass our old lineItem into it.
 module.exports = function lineItem(oldLineItems){
     this.items = oldLineItems.items || {};
     this.totalQty = oldLineItems.totalQty || 0;

@@ -12,7 +12,7 @@ module.exports = class Address {
 };
 
 
-
+/*----------------------------------- Skraldespand ------------------------------------------------------*/
 /* GAMLE. Samme funktionalitet flyttet til controllers.
 module.exports = {
     // Funktion der indsætter leveringsaddresse i database.
@@ -36,19 +36,7 @@ module.exports = {
             });
         });
     },
-
-
     */
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -69,6 +57,7 @@ module.exports = {
         })
     }
 };*/
+
 /*
 // Hjælpe-funktion der finder en brugers addresse fra user_id.
 function findOneById(id) {

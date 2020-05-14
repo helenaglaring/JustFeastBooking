@@ -58,6 +58,10 @@ module.exports = {
 
 
 
+
+
+/*----------------------------------- Skraldespand ------------------------------------------------------*/
+
 /* GAMLE. Virkede med de funktioner i modellaget inden vi implementerede klasser,
 //-- Loader produkter fra database og viser dem på productPage --//
 module.exports = {

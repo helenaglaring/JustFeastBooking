@@ -51,6 +51,7 @@ router.get('/', homeController);
 /*--------------------------- PRODUCTS endpoint -----------------------------*/
 // GET route for products page.
 // Viser alle produkter fra databasen.
+
 router.get('/products',  auth.isLoggedIn, auth.createCart, productControllers.productPage);//
 
 
@@ -72,7 +73,6 @@ router.get('/user/login', auth.isNotLoggedIn, userControllers.loginPage);
 router.post('/user/login', loginValidationRules(), loginValidate, userControllers.login);
 
 /*------------- ACCOUNT  ---------------*/
-
 // GET route for user account page
 // Middleware: Tillader kun adgang hvis bruger er logget ind.
 router.get('/user/account', auth.isLoggedIn, userControllers.account);

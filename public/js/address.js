@@ -116,7 +116,6 @@ addressForm.addEventListener('submit', event=> {
 
 
 
-
 /*
 window.onload = function() {
     let streetname = document.getElementById("val_streetname");

@@ -67,7 +67,7 @@ module.exports = {
 
 
 
-
+/*----------------------------------- Skraldespand ------------------------------------------------------*/
     /* GAMLE. Virkede med de funktioner i modellaget inden vi implementerede klasser,
 
             // Ændrer ordre-status fra 'cart' til 'order' når kunde bekræfter betaling.

@@ -18,7 +18,7 @@ module.exports = class User {
 
 
 
-
+/*----------------------------------- Skraldespand  ------------------------------------------------------*/
 /* GAMLE. Samme funktionalitet flyttet til controllers.
 module.exports = {
     // Funktion der opretter ny bruger og gemmer i databasen.

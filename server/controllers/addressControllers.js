@@ -96,6 +96,10 @@ module.exports = {
 };
 
 
+
+
+
+/*----------------------------------- Skraldespand ------------------------------------------------------*/
 /* Gammel version: Opdateret ny med async og try catch. bruger ikke længere hjælpefunktion 'insertOne'
 
     // POST route for delivery-address

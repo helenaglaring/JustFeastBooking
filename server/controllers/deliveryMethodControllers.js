@@ -120,7 +120,7 @@ module.exports = {
 // Kilde: https://stackoverflow.com/questions/24981181/express-session-does-not-save-after-redirect
 
 
-
+/*----------------------------------- Skraldespand ------------------------------------------------------*/
 /*
     // POST route for delivery-page
     create: (req, res) => {

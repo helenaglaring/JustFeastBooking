@@ -9,6 +9,8 @@ module.exports = class Product {
     }
 };
 
+
+/*----------------------------------- Skraldespand  ------------------------------------------------------*/
 /* GAMLE. Samme funktionalitet flyttet til controllers.
 module.exports = {
     // Funktion der henter alle produkter fra db

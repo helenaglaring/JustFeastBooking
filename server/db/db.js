@@ -1,5 +1,5 @@
 
-/*------------------ SET UP configuration of PostgreSQL connection------------------------------------------*/
+/*------------------ SET UP configuration af PostgreSQL connection ------------------------------------------*/
 // Forbindelse til Databasen etableres her
 
 // Opretter ny pool med  configuration:
@@ -14,7 +14,7 @@ const pool = new Pool( {
     password: "password",
 });
 
-// Acquires a client from the pool.
+// Acquirer en client fra pool.
 pool.on('connect', () => {
     console.log('connected to the Database: ');
 });
@@ -26,3 +26,7 @@ pool.query('SELECT NOW()').then(result => {
 });*/
 
 module.exports = pool;
+
+
+// Kilde til setup af pool
+// https://node-postgres.com/api/pool

@@ -160,6 +160,7 @@ module.exports = {
 };
 
 
+/*----------------------------------- Skraldespand ------------------------------------------------------*/
 /*
     // Hvis betaling bekræftes succesfuldt af kunde ændres ordrens status fra 'cart' til 'order'
     placeOrder: (req, res) => {
@@ -208,7 +209,6 @@ module.exports = {
                 res.redirect('/payment');
             });
     },
-
  */
 
 
@@ -265,7 +265,7 @@ findOne: (req, res) => {
 
 
 
-/* GAMLE. Virkede med de funktioner i modellaget inden vi implementerede klasser,
+/* GAMMEL. Virkede med de funktioner i modellaget inden vi implementerede klasser,
  // Nyeste uden inner joins
 // GET order ud fra orderID i params :id.
 // Funktion der henter specifik ordre fra db ud fra order_id. Bruges til at vise ordre-bekræftelse når kunde har gennemført betaling.
